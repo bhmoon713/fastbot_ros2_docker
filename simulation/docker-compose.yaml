@@ -1,0 +1,35 @@
+version: "3.3"
+services:
+  fastbot-ros2-gazebo:
+    image: stud/stud-cp22:fastbot-ros2-gazebo
+    build:
+      context: ../../../
+      dockerfile: src/fastbot_ros2_docker/simulation/fastbot-ros2-gazebo/Dockerfile
+    container_name: fastbot-ros2-gazebo
+    network_mode: host
+    environment:
+      - DISPLAY=${DISPLAY:-:0}
+      - QT_X11_NO_MITSHM=1
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix:ro
+
+  fastbot-ros2-slam:
+    image: stud/stud-cp22:fastbot-ros2-slam
+    build:
+      context: ../../../
+      dockerfile: src/fastbot_ros2_docker/simulation/fastbot-ros2-slam/Dockerfile
+    container_name: fastbot-ros2-slam
+    network_mode: host
+    depends_on:
+      - fastbot-ros2-gazebo
+
+  fastbot-ros2-webapp:
+    image: stud/stud-cp22:fastbot-ros2-webapp
+    build:
+      context: ../../../
+      dockerfile: src/fastbot_ros2_docker/simulation/fastbot-ros2-webapp/Dockerfile
+    container_name: fastbot-ros2-webapp
+    ports:
+      - "8080:80"
+    depends_on:
+      - fastbot-ros2-gazebo
