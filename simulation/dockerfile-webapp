@@ -1,0 +1,13 @@
+FROM ubuntu:22.04
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+    && apt-get install -y nginx \
+    && rm -rf /var/lib/apt/lists/*
+
+# These paths are relative to the BUILD CONTEXT (we'll set it to ~/ros2_ws/src)
+COPY fastbot_ros2_docker/simulation/entrypoint.sh /entrypoint.sh
+COPY fastbot_webapp/ /var/www/html/
+
+ENTRYPOINT ["/bin/bash"]
+CMD ["/entrypoint.sh"]
