@@ -77,8 +77,6 @@ docker run -it --net=host -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix my_navigat
 docker run -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix gazebo:v0
 ```
 
-```
-
 # Example of commands
 
 ```bash
