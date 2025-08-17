@@ -1,5 +1,4 @@
-#Install docker and xhost
-
+# First install docker, docker-compose and xhost
 sudo apt-get update
 sudo apt-get install -y docker.io docker-compose
 sudo service docker start
