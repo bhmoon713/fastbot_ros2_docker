@@ -14,11 +14,15 @@ WORKDIR /ros2_ws
 
 # Copy your packages INTO the image (paths are relative to the BUILD CONTEXT)
 # Build context will be ~/ros2_ws/src so 'fastbot/...' exists.
-COPY fastbot/fastbot_description/ src/fastbot/fastbot_description/
-COPY fastbot/fastbot_gazebo/      src/fastbot/fastbot_gazebo/
+COPY fastbot/fastbot_description/ src/fastbot_description/
+COPY fastbot/fastbot_gazebo/      src/fastbot_gazebo/
+
 
 # Build the workspace
 RUN bash -lc "source /opt/ros/humble/setup.bash && colcon build --symlink-install"
+
+ENV GAZEBO_MODEL_PATH=/ros2_ws/src/fastbot_gazebo/models:/ros2_ws/src/fastbot_description/models:/usr/share/gazebo-11/models:$GAZEBO_MODEL_PATH
+ENV GAZEBO_RESOURCE_PATH=/ros2_ws/src/fastbot_gazebo:$GAZEBO_RESOURCE_PATH
 
 # Always source Humble + your overlay when the container runs
 ENTRYPOINT ["/bin/bash","-lc"]

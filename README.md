@@ -89,3 +89,15 @@ docker-compose build fastbot-ros2-slam
 docker-compose up fastbot-ros2-gazebo
 docker-compose up fastbot-ros2-slam
 ```
+
+
+if you want to run only nginx
+```bash
+docker run --rm -it \
+  --name nginx_container \
+  -h nginx_container \
+  -p 7000:80 \
+  -v $HOME/ros2_ws/src/fastbot_webapp:/usr/share/nginx/html:ro \
+  -v $HOME/ros2_ws/src/fastbot_ros2_docker/simulation/logs:/var/log/nginx \
+  bhmoon418/bhmoon713-cp22:fastbot-ros2-webapp
+```

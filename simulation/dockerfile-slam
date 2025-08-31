@@ -12,8 +12,8 @@ WORKDIR /ros2_ws
 
 # Copy your packages into the image (paths are relative to BUILD CONTEXT)
 # Keep description too in case your launch/xacro uses it
-COPY fastbot/fastbot_slam/        src/fastbot/fastbot_slam/
-COPY fastbot/fastbot_description/ src/fastbot/fastbot_description/
+COPY fastbot/fastbot_slam/        src/fastbot_slam/
+COPY fastbot/fastbot_description/ src/fastbot_description/
 
 # Build the overlay workspace
 RUN bash -lc "source /opt/ros/humble/setup.bash && colcon build --symlink-install"
