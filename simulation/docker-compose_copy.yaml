@@ -1,53 +1,66 @@
-version: '3'
+version: "3"
+
 services:
   fastbot-ros2-gazebo:
-    image: bhmoon713/bhmoon713-cp22:fastbot-ros2-gazebo
+    build:
+      context: ${HOME}/ros2_ws/src
+      dockerfile: fastbot_ros2_docker/simulation/dockerfile-gazebo
+    image: bhmoon418/bhmoon713-cp22:fastbot-ros2-gazebo
+    privileged: true
+    cap_add:
+      - NET_ADMIN
     container_name: fastbot-ros2-gazebo
+    network_mode: host
     environment:
       - DISPLAY=${DISPLAY}
-      - ROS_DOMAIN_ID=0
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - ROS_DOMAIN_ID=1
+      - GAZEBO_MODEL_PATH=/ros2_ws/src/
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-    privileged: true
-    networks:
-      - fastbot-network
-    restart: always
-    entrypoint: ["/bin/bash", "-c"]
-    command: ["source install/setup.bash && ros2 launch fastbot_gazebo one_fastbot_room.launch.py"]
+    command: bash -c "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_gazebo one_fastbot_room.launch.py"
   
   fastbot-ros2-slam:
-    image: bhmoon713/bhmoon713-cp22:fastbot-ros2-slam
+    build:
+      context: ${HOME}/ros2_ws/src
+      dockerfile: fastbot_ros2_docker/simulation/dockerfile-slam
+    image: bhmoon418/bhmoon713-cp22:fastbot-ros2-slam
     container_name: fastbot-ros2-slam
+    network_mode: host
+    depends_on:
+      - fastbot-ros2-gazebo
+
     environment:
       - DISPLAY=${DISPLAY}
-      - ROS_DOMAIN_ID=0
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - ROS_DOMAIN_ID=1
+      - GAZEBO_MODEL_PATH=${GAZEBO_MODEL_PATH}:/ros2_ws/src/
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-    privileged: true
-    networks:
-      - fastbot-network
-    restart: always
-    entrypoint: ["/bin/bash", "-c"]
-    command: ["sleep 20 && source install/setup.bash && ros2 launch fastbot_slam navigation.launch.py"]
-  
+    command:  bash -c "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_slam cartographer.launch.py"
+
   fastbot-ros2-webapp:
-    image: bhmoon713/bhmoon713-cp22:fastbot-ros2-webapp
-    container_name: fastbot-ros2-webapp
-    hostname: fastbot-ros2-webapp
-    privileged: true
+    build:
+      context: ${HOME}/ros2_ws/src
+      dockerfile: fastbot_ros2_docker/simulation/dockerfile-webapp
+    image: bhmoon418/bhmoon713-cp22:fastbot-ros2-webapp
+    container_name: nginx_container
+    hostname: nginx_container
+    network_mode: host
+    restart: always
     environment:
-      - ROS_DOMAIN_ID=0
+      - DISPLAY=${DISPLAY}
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - ROS_DOMAIN_ID=1
+      - GAZEBO_MODEL_PATH=${GAZEBO_MODEL_PATH}:/ros2_ws/src/
+    depends_on:
+      - fastbot-ros2-slam
     volumes:
+      - ${HOME}/ros2_ws/src/fastbot_webapp:/usr/share/nginx/html:ro
       - logs:/var/log/nginx
-    networks:
-      - fastbot-network
     ports:
       - "7000:80"
-      - "9090:9090"
-    restart: always
+      - "9090:9090"  # expose rosbridge websocket if needed
 
 volumes:
   logs: {}
-networks:
-  fastbot-network:
-    driver: bridge

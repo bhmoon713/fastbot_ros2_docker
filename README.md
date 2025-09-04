@@ -95,6 +95,9 @@ or
 ```bash
 docker run --rm -it --name nginx_container   -h nginx_container   -p 7000:80   bhmoon418/bhmoon713-cp22:fastbot-ros2-webapp
 docker run --rm -it --name nginx_container -h nginx_container -p 7000:80 -p 9090:9090 bhmoon418/bhmoon713-cp22:fastbot-ros2-webapp
+docker run --rm -it -net=host --name nginx_container -h nginx_container -p 7000:80 -p 9090:9090 bhmoon418/bhmoon713-cp22:fastbot-ros2-webapp
+
+
 
 ```
 ros2 launch rosbridge_server rosbridge_websocket_launch.xml
