@@ -18,24 +18,25 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 # Optional: forward nginx logs to Docker logs
-RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
-    ln -sf /dev/stderr /var/log/nginx/error.log
+# RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
+#    ln -sf /dev/stderr /var/log/nginx/error.log
 
 # Workspace (only if you really need colcon later; safe to keep)
 WORKDIR /ros2_ws/src
 
 # Your files (adjust paths to your build context)
-COPY fastbot_ros2_docker/simulation/entrypoint.sh /usr/local/bin/entrypoint.sh
-COPY fastbot_webapp/ /usr/share/nginx/html/
+COPY fastbot_ros2_docker/simulation/entrypoint.sh /entrypoint.sh
+COPY fastbot_webapp/ /var/www/html/
 
 # Make entrypoint executable
-RUN chmod +x /usr/local/bin/entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
 # (Optional) simple healthcheck on nginx
-HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD curl -f http://localhost/ || exit 1
+#HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD curl -f http://localhost/ || exit 1
 
 # Ports: 80 (nginx), 9090 (rosbridge), 8080 (web_video_server)
-EXPOSE 80 9090 8080
+#EXPOSE 80 9090 8080
 
-# Start script (will start rosbridge + nginx)
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/bin/bash"]
+CMD ["/entrypoint.sh"]
+

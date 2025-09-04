@@ -91,7 +91,10 @@ docker run --rm -it \
   -v $HOME/ros2_ws/src/fastbot_ros2_docker/simulation/logs:/var/log/nginx \
   bhmoon418/bhmoon713-cp22:fastbot-ros2-webapp
 ```
-
+or
+```bash
+user:~/ros2_ws/src$ docker run --rm -it   --name nginx_container   -h nginx_container   -p 7000:80   bhmoon418/bhmoon713-cp22:fastbot-ros2-webapp
+```
 
 # You can build and execute all of images at once
 ```bash
