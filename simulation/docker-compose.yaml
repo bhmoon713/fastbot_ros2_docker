@@ -36,25 +36,28 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
     #command:  bash -c "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_slam cartographer.launch.py"
-  
+ 
   
   fastbot-ros2-webapp:
-    # build:
-    #   context: ${HOME}/ros2_ws/src
-    #   dockerfile: fastbot_ros2_docker/simulation/dockerfile-webapp
+    build:
+      context: ${HOME}/ros2_ws/src
+      dockerfile: fastbot_ros2_docker/simulation/dockerfile-webapp
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-webapp
     container_name: nginx_container
     hostname: nginx_container
+    network_mode: bridge
     restart: always
     volumes:
       - ${HOME}/ros2_ws/src/fastbot_webapp:/usr/share/nginx/html:ro
       - logs:/var/log/nginx
       # remove or create this file to avoid compose errors
       # - ${HOME}/no-file.txt:/no-file.txt
+    environment:
+      - ROS_DOMAIN_ID=1
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
     ports:
       - "7000:80"      # For web app
       - "9090:9090"  # expose rosbridge websocket if needed
-    network_mode: bridge
     depends_on:
       - fastbot-ros2-slam
 

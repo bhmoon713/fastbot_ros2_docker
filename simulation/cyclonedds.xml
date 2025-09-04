@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CycloneDDS xmlns="https://cdds.io/config">
+  <Domain id="any">
+    <General>
+      <NetworkInterfaceAddress>eth0</NetworkInterfaceAddress>
+    </General>
+    <Discovery>
+      <!-- Explicit unicast peers by service name (Compose provides DNS) -->
+      <Peers>
+        <Peer address="fastbot-ros2-gazebo"/>
+        <Peer address="fastbot-ros2-slam"/>
+        <Peer address="nginx_container"/>
+      </Peers>
+    </Discovery>
+  </Domain>
+</CycloneDDS>
