@@ -1,4 +1,4 @@
-FROM osrf/ros:humble-desktop-full
+FROM osrf/ros:humble-desktop
 
 # Tools + deps for building and running SLAM
 RUN apt-get update && apt-get install -y \
@@ -6,18 +6,26 @@ RUN apt-get update && apt-get install -y \
     ros-humble-cartographer-ros \
     ros-humble-robot-state-publisher \
     ros-humble-tf2-ros \
+    ros-humble-slam-toolbox \
+    ros-humble-nav2-bringup \
+    ros-humble-navigation2 \
+    ros-humble-rviz2 \
+    ros-humble-cartographer \
     && rm -rf /var/lib/apt/lists/*
+
 
 WORKDIR /ros2_ws
 
 # Copy your packages into the image (paths are relative to BUILD CONTEXT)
-# Keep description too in case your launch/xacro uses it
+# Keep description too 
 COPY fastbot/fastbot_slam/        src/fastbot_slam/
 COPY fastbot/fastbot_description/ src/fastbot_description/
 
-# Build the overlay workspace
-RUN bash -lc "source /opt/ros/humble/setup.bash && colcon build --symlink-install"
+# Build the Colcon workspace and ensure it's sourced
+RUN source /opt/ros/humble/setup.bash \
+ && cd /ros2_ws \
+ && colcon build
+RUN echo "source /ros2_ws/install/setup.bash" >> ~/.bashrc
 
-# Source Humble + overlay and launch Cartographer
-ENTRYPOINT ["/bin/bash","-lc"]
-CMD ["source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_slam pathplanner.launch.py"]
+# Source Humble + overlay and launch navigation
+ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_slam pathplanner.launch.py"]

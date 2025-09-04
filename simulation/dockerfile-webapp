@@ -1,6 +1,9 @@
 FROM osrf/ros:humble-desktop
 ENV DEBIAN_FRONTEND=noninteractive
 
+# Change the default shell to Bash
+SHELL [ "/bin/bash" , "-c" ]
+
 # Installing nginx
 RUN apt-get update \
     && apt-get install -y nginx \
@@ -25,14 +28,11 @@ COPY fastbot_webapp/ /var/www/html/
 WORKDIR /ros2_ws/src
 RUN git clone -b humble https://github.com/RobotWebTools/rosbridge_suite.git
 
-# Build the Colcon workspace and ensure it's sourced
-WORKDIR /ros2_ws
+ # Build the Colcon workspace and ensure it's sourced
 RUN source /opt/ros/humble/setup.bash \
  && cd /ros2_ws \
  && colcon build
-
 RUN echo "source /ros2_ws/install/setup.bash" >> ~/.bashrc
-
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["/entrypoint.sh"]

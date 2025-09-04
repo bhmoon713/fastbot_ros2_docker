@@ -87,6 +87,12 @@ xhost +local:root
 docker run -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix bhmoon418/bhmoon713-cp22:fastbot-ros2-gazebo bash
 ```
 
+# Run slam only.
+```
+xhost +local:root
+docker run -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix bhmoon418/bhmoon713-cp22:fastbot-ros2-slam bash
+```
+
 Example of commands
 
 ```bash
