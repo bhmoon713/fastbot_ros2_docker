@@ -1,13 +1,16 @@
-#! /bin/bash 
-set -e
-set -x
+#!/usr/bin/env bash
+# safer flags, but avoid -u while sourcing ROS
+set -Eeo pipefail
 
-# Source ROS 2 else ros2 command is not recognized
-#source /opt/ros/humble/setup.bash
-#source /ros2_ws/install/setup.bash
+# --- source ROS envs (disable -u temporarily) ---
+set +u
+source /opt/ros/humble/setup.bash
+[ -f /ros2_ws/install/setup.bash ] && source /ros2_ws/install/setup.bash
+set -u 2>/dev/null || true   # re-enable if supported
 
-#ros2 launch rosbridge_server rosbridge_websocket_launch.xml
+# Start rosbridge (bind to all interfaces for -p 9090:9090)
+ros2 launch rosbridge_server rosbridge_websocket_launch.xml \
+  address:=0.0.0.0 port:=9090 > /var/log/rosbridge.log 2>&1 &
 
-echo "$(date +'[%Y-%m-%d %T]') Starting nginx server..."
-
-nginx -g 'daemon off;'
+# Start nginx in foreground
+exec nginx -g 'daemon off;'
