@@ -1,38 +1,41 @@
 FROM osrf/ros:humble-desktop
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Change the default shell to Bash
-SHELL [ "/bin/bash" , "-c" ]
+# Use bash for RUN steps
+SHELL ["/bin/bash", "-c"]
 
-# Installing nginx
-RUN apt-get update \
-    && apt-get install -y nginx \
-    && apt-get install -y python3-pip  \
-    python3-colcon-common-extensions \
-    python3-setuptools \
-    python3-pytest \
-    python3-numpy \
-    ros-humble-web-video-server \ 
-    ros-humble-ament-cmake-mypy \ 
-    && rm -rf /var/lib/apt/lists/*
+# System deps (keep one layer)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      nginx \
+      python3-pip \
+      python3-colcon-common-extensions \
+      python3-setuptools \
+      python3-pytest \
+      python3-numpy \
+      ros-humble-rosbridge-server \
+      ros-humble-web-video-server && \
+    rm -rf /var/lib/apt/lists/*
 
-# Install Python deps for rosbridge_suite
-RUN pip install pymongo
-RUN pip install tornado
-RUN pip install pyquaternion
+# Optional: forward nginx logs to Docker logs
+RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
+    ln -sf /dev/stderr /var/log/nginx/error.log
 
-# These paths are relative to the BUILD CONTEXT (we'll set it to ~/ros2_ws/src)
-COPY fastbot_ros2_docker/simulation/entrypoint.sh /entrypoint.sh
-COPY fastbot_webapp/ /var/www/html/
-
+# Workspace (only if you really need colcon later; safe to keep)
 WORKDIR /ros2_ws/src
-RUN git clone -b humble https://github.com/RobotWebTools/rosbridge_suite.git
 
- # Build the Colcon workspace and ensure it's sourced
-RUN source /opt/ros/humble/setup.bash \
- && cd /ros2_ws \
- && colcon build
-RUN echo "source /ros2_ws/install/setup.bash" >> ~/.bashrc
+# Your files (adjust paths to your build context)
+COPY fastbot_ros2_docker/simulation/entrypoint.sh /usr/local/bin/entrypoint.sh
+COPY fastbot_webapp/ /usr/share/nginx/html/
 
-ENTRYPOINT ["/bin/bash"]
-CMD ["/entrypoint.sh"]
+# Make entrypoint executable
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# (Optional) simple healthcheck on nginx
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD curl -f http://localhost/ || exit 1
+
+# Ports: 80 (nginx), 9090 (rosbridge), 8080 (web_video_server)
+EXPOSE 80 9090 8080
+
+# Start script (will start rosbridge + nginx)
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
