@@ -39,9 +39,9 @@ services:
   
   
   fastbot-ros2-webapp:
-    build:
-      context: ${HOME}/ros2_ws/src
-      dockerfile: fastbot_ros2_docker/simulation/dockerfile-webapp
+    # build:
+    #   context: ${HOME}/ros2_ws/src
+    #   dockerfile: fastbot_ros2_docker/simulation/dockerfile-webapp
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-webapp
     container_name: nginx_container
     hostname: nginx_container
@@ -57,10 +57,6 @@ services:
     network_mode: bridge
     depends_on:
       - fastbot-ros2-slam
-    environment:
-      - DISPLAY=${DISPLAY}
-      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-      - ROS_DOMAIN_ID=1
 
 volumes:
   logs: {}
