@@ -44,6 +44,13 @@ user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ docker-compose up
 ```
 
 
+# When you try on other terminal
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+sudo service docker restart
+```
+
 
 # For real robot directory
 ```bash
@@ -74,11 +81,10 @@ docker volume rm $(docker volume ls -q)
 docker volume ls
 ```
 
-Here can try to run docker each.
+# Run simulation only.
 ```
 xhost +local:root
-docker run -it --net=host -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix my_navigation_docker:latest
-docker run -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix gazebo:v0
+docker run -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix bhmoon418/bhmoon713-cp22:fastbot-ros2-gazebo bash
 ```
 
 Example of commands
