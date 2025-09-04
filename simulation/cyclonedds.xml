@@ -7,9 +7,14 @@
     <Discovery>
       <!-- Explicit unicast peers by service name (Compose provides DNS) -->
       <Peers>
-        <Peer address="fastbot-ros2-gazebo"/>
+        <!-- <Peer address="fastbot-ros2-gazebo"/>
         <Peer address="fastbot-ros2-slam"/>
-        <Peer address="nginx_container"/>
+        <Peer address="nginx_container"/> -->
+
+        <Peer address="172.17.0.2"/>
+        <Peer address="172.17.0.3"/>
+        <Peer address="172.17.0.4"/>
+
       </Peers>
     </Discovery>
   </Domain>
