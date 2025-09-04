@@ -1,5 +1,8 @@
 FROM osrf/ros:humble-desktop
 
+# Change the default shell to Bash
+SHELL [ "/bin/bash" , "-c" ]
+
 # Tools + deps for building and running SLAM
 RUN apt-get update && apt-get install -y \
     python3-colcon-common-extensions build-essential \
