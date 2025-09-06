@@ -19,6 +19,9 @@ RUN apt-get update && \
       ros-humble-rosbridge-suite && \
     rm -rf /var/lib/apt/lists/*
 
+RUN apt-get update && apt-get install -y \
+    ros-humble-rmw-cyclonedds-cpp \
+    ros-humble-cyclonedds
 
 # Optional: forward nginx logs to Docker logs
 # RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
