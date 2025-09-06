@@ -15,10 +15,12 @@ sudo apt-get install -y x11-xserver-utils
 # Simulation Docker files are located in below directory
 ```bash
 user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ ls
-docker-compose.yaml docker-compose_copy.yaml dockerfile-gazebo dockerfile-slam dockerfile-webapp entrypoint.sh
+docker-compose.yaml 
+dockerfile-gazebo 
+dockerfile-slam 
+dockerfile-webapp entrypoint.sh
 my-site.conf
 ```
-
 
 # Build image per each package
 ```bash
@@ -34,47 +36,59 @@ bhmoon418/bhmoon713-cp22:fastbot-ros2-slam #This Docker image will contain every
 bhmoon418/bhmoon713-cp22:fastbot-ros2-gazebo #This Docker image will contain everything necessary for starting the Gazebo simulation in ROS2.
 ```
 
-
 # You can build and execute all of images at once
 ```bash
 user: cd ~/ros2_ws/src/fastbot_ros2_docker/simulation
 user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ xhost +local:root
 user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ docker-compose up
 ```
+
 ## you want to skip indiviual build process you can build at docker-compose.
 ```bash
 user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ docker-compose up --build
 ```
+
 ## Check the network, it should show three attachments
+
+```bash
 docker network inspect simulation_fastbot_net | grep -i name
+```
+    "Name": "simulation_fastbot_net",
+            "Name": "nginx_container",
+            "Name": "fastbot-ros2-gazebo",
+            "Name": "fastbot-ros2-slam",
 
-        "Name": "simulation_fastbot_net",
-                "Name": "nginx_container",
-                "Name": "fastbot-ros2-gazebo",
-                "Name": "fastbot-ros2-slam",
 
-
-## Check each of container and test
+## Check each docker : nginx Docker
 ```bash
 sudo docker exec -it nginx_container bash
 
 root@cd308b023452:
 source /opt/ros/humble/setup.bash
 source /ros2_ws/install/setup.bash
-ps aux | grep ros
-
-Start rosbridge
-ros2 launch rosbridge_server rosbridge_websocket_launch.xml
-
-In a new terminal (or background):
-ros2 run tf2_web_republisher tf2_web_republisher
-
-sudo docker exec -it fastbot-ros2-gazebo bash
-root@cd308b0e1118:/ros2_ws# ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args --remap cmd_vel:=fastbot/cmd_vel
-
-sudo docker exec -it fastbot-ros2-slam bash
+ps aux | grep republisher
+ps aux | grep rosbridge
 ```
 
+### Start rosbridge
+```bash
+ros2 launch rosbridge_server rosbridge_websocket_launch.xml
+```
+
+### In a new terminal (or background):
+```bash
+ros2 run tf2_web_republisher tf2_web_republisher
+```
+
+## Gazebo Docker 
+```bash
+sudo docker exec -it fastbot-ros2-gazebo bash
+root@cd308b0e1118:/ros2_ws# ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args --remap cmd_vel:=fastbot/cmd_vel
+```
+## Slam Docker
+```bash
+sudo docker exec -it fastbot-ros2-slam bash
+```
 
 # Individual Docker Running 
 ## Run simulation only.
