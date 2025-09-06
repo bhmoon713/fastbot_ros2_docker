@@ -3,11 +3,11 @@
 ```bash
 sudo apt-get update
 sudo apt-get install -y docker.io docker-compose
-
-
 sudo service docker start
+
 sudo usermod -aG docker $USER
 newgrp docker
+
 sudo service docker restart
 sudo apt-get install -y x11-xserver-utils
 ```
@@ -29,15 +29,12 @@ docker build -t bhmoon418/bhmoon713-cp22:fastbot-ros2-gazebo -f fastbot_ros2_doc
 ```
 Following images are created
 ```
-bhmoon418/bhmoon713-cp22:fastbot-ros2-webapp #This Docker image will contain everything necessary for starting the
-Fastbot Web Application.
-bhmoon418/bhmoon713-cp22:fastbot-ros2-slam #This Docker image will contain everything necessary for starting the Mapping
-system.
-bhmoon418/bhmoon713-cp22:fastbot-ros2-gazebo #This Docker image will contain everything necessary for starting the
-Gazebo simulation in ROS2.
+bhmoon418/bhmoon713-cp22:fastbot-ros2-webapp #This Docker image will contain everything necessary for starting the Fastbot Web Application.
+bhmoon418/bhmoon713-cp22:fastbot-ros2-slam #This Docker image will contain everything necessary for starting the Mapping system.
+bhmoon418/bhmoon713-cp22:fastbot-ros2-gazebo #This Docker image will contain everything necessary for starting the Gazebo simulation in ROS2.
 ```
-# Run simulation only.
 
+# Run simulation only.
 Below command will launch simulation
 ```bash
 xhost +local:root
@@ -109,6 +106,9 @@ user: cd ~/ros2_ws/src/fastbot_ros2_docker/simulation
 user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ xhost +local:root
 user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ docker-compose up
 ```
+
+
+docker network inspect simulation_fastbot_net | grep -i name
 
 
 # When you try on other terminal
