@@ -4,7 +4,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Use bash for RUN steps
 SHELL ["/bin/bash", "-c"]
 
-# System deps (keep one layer)
+# Install system dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
       apt-utils \
@@ -14,6 +14,7 @@ RUN apt-get update && \
       python3-setuptools \
       python3-pytest \
       python3-numpy \
+      git \
       ros-humble-rosbridge-server \
       ros-humble-web-video-server \
       ros-humble-rosbridge-suite && \
@@ -23,27 +24,27 @@ RUN apt-get update && apt-get install -y \
     ros-humble-rmw-cyclonedds-cpp \
     ros-humble-cyclonedds
 
-# Optional: forward nginx logs to Docker logs
-# RUN ln -sf /dev/stdout /var/log/nginx/access.log && \
-#    ln -sf /dev/stderr /var/log/nginx/error.log
-
-# Workspace (only if you really need colcon later; safe to keep)
+# Create workspace and clone tf2_web_republisher
 WORKDIR /ros2_ws/src
+# COPY fastbot_webapp/tf2_web_republisher_py /ros2_ws/src/tf2_web_republisher_py
 
-# Your files (adjust paths to your build context)
+RUN git clone https://github.com/RobotWebTools/tf2_web_republisher.git -b ros2
+
+# Build the workspace
+WORKDIR /ros2_ws
+RUN . /opt/ros/humble/setup.sh && colcon build
+
+# Source setup on container start
+RUN echo "source /opt/ros/humble/setup.bash" >> /root/.bashrc && \
+    echo "source /ros2_ws/install/setup.bash" >> /root/.bashrc && \
+    echo "cd /ros2_ws" >> /root/.bashrc
+
+# Copy static files (webapp and entrypoint)
 COPY fastbot_ros2_docker/simulation/entrypoint.sh /entrypoint.sh
 COPY fastbot_webapp/ /var/www/html/
-
-# Make entrypoint executable
 RUN chmod +x /entrypoint.sh
 
-# (Optional) simple healthcheck on nginx
-#HEALTHCHECK --interval=30s --timeout=5s --retries=3 CMD curl -f http://localhost/ || exit 1
-
-# Ports: 80 (nginx), 9090 (rosbridge), 8080 (web_video_server)
 EXPOSE 80 9090 8080
-
 
 ENTRYPOINT ["/bin/bash"]
 CMD ["/entrypoint.sh"]
-
