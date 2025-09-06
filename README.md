@@ -65,8 +65,14 @@ docker run -it \
 and you can go to next terminal and run below command to move into container.
 
 ```bash
-sudo docker exec -it fastbot_gazebo_container bash
+sudo docker exec -it nginx_container bash
+sudo docker exec -it fastbot-ros2-gazebo bash
+sudo docker exec -it fastbot-ros2-slam bash
 ```
+
+ros2 launch rosbridge_server rosbridge_websocket_launch.xml
+    
+
 and now in the container, move the robot
 
 ```bash
