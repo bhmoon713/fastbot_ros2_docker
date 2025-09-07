@@ -1,3 +1,8 @@
+# Using Sim, teleop and Categrapher, Create map file
+```bash
+user:~/ros2_ws/src/fastbot/fastbot_slam/config$ ros2 run nav2_map_server map_saver_cli -f one_fastbot_room_map
+```
+
 # First, install docker, docker-compose and xhost
 
 ```bash
@@ -22,6 +27,14 @@ dockerfile-webapp entrypoint.sh
 my-site.conf
 ```
 
+
+# You want to skip indiviual build process you can build at docker-compose.
+```bash
+user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ docker-compose up --build
+```
+
+
+
 # Build image per each package
 ```bash
 user:cd ~/ros2_ws/src
@@ -43,10 +56,6 @@ user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ xhost +local:root
 user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ docker-compose up
 ```
 
-## you want to skip indiviual build process you can build at docker-compose.
-```bash
-user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ docker-compose up --build
-```
 
 ## Check the network, it should show three attachments
 
@@ -70,17 +79,17 @@ ps aux | grep republisher
 ps aux | grep rosbridge
 ```
 
-### Start rosbridge
+### Rosbridge is already running by docker but this is command
 ```bash
 ros2 launch rosbridge_server rosbridge_websocket_launch.xml
 ```
 
-### In a new terminal (or background):
+### tf2_web_republisher is already running by docker but this is command
 ```bash
-ros2 run tf2_web_republisher tf2_web_republisher
+ros2 run tf2_web_republisher tf2_web_republisher_node
 ```
 
-## Gazebo Docker 
+## Gazebo Docker (try move robot)
 ```bash
 sudo docker exec -it fastbot-ros2-gazebo bash
 root@cd308b0e1118:/ros2_ws# ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args --remap cmd_vel:=fastbot/cmd_vel
@@ -98,7 +107,6 @@ xhost +local:root
 docker run -it -e DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix bhmoon418/bhmoon713-cp22:fastbot-ros2-gazebo bash
 ```
 or
-
 ```bash
 docker run -it \
   -e DISPLAY=$DISPLAY \
@@ -109,7 +117,6 @@ docker run -it \
   --net=host \
   bhmoon418/bhmoon713-cp22:fastbot-ros2-gazebo bash
 ```
-
 or 
 ```bash
 docker run -it \
@@ -117,19 +124,6 @@ docker run -it \
   -v /tmp/.X11-unix:/tmp/.X11-unix \
   --name fastbot_gazebo_container \
   bhmoon418/bhmoon713-cp22:fastbot-ros2-gazebo bash
-```
-
-and you can go to next terminal and run below command to move into container.
-
-
-
-ros2 launch rosbridge_server rosbridge_websocket_launch.xml
-    
-
-and now in the container, move the robot
-
-```bash
-
 ```
 
 ## Run slam only.
@@ -152,20 +146,13 @@ or
 docker run --rm -it --name nginx_container   -h nginx_container   -p 7000:80   bhmoon418/bhmoon713-cp22:fastbot-ros2-webapp
 docker run --rm -it --name nginx_container -h nginx_container -p 7000:80 -p 9090:9090 bhmoon418/bhmoon713-cp22:fastbot-ros2-webapp
 docker run --rm -it --net=host --name nginx_container -h nginx_container -p 7000:80 -p 9090:9090 bhmoon418/bhmoon713-cp22:fastbot-ros2-webapp
-
-
 ```
-ros2 launch rosbridge_server rosbridge_websocket_launch.xml
-
-
-
 
 
 # When you try on other terminal
 ```bash
 sudo usermod -aG docker $USER
 newgrp docker
-sudo service docker restart
 ```
 
 
@@ -181,16 +168,6 @@ user:~/ros2_ws/src/fastbot_ros2_docker/real$ docker-compose up
 user:~/ros2_ws/src$ docker images
 ```
 
-REPOSITORY TAG IMAGE ID CREATED SIZE
-bhmoon418/bhmoon713-cp22 fastbot-ros2-slam-real 22c275187bb6 About a minute ago 4.35GB
-bhmoon418/bhmoon713-cp22 fastbot-ros2-real 6492991e4952 6 minutes ago 4.02GB
-bhmoon418/bhmoon713-cp22 fastbot-ros2-gazebo 24f5af8316af 18 minutes ago 4.09GB
-bhmoon418/bhmoon713-cp22 fastbot-ros2-slam 04ff52edf9f8 23 minutes ago 4.12GB
-bhmoon418/bhmoon713-cp22 fastbot-ros2-webapp ad977128f3d1 33 minutes ago 238MB
-osrf/ros humble-desktop-full b503d5105db2 4 days ago 3.84GB
-ubuntu 22.04 8a4eacce82df 2 weeks ago 77.9MB
-
-
 # For the case something went wrong, below command will clear up dockers and volumes
 
 ```bash
@@ -199,17 +176,3 @@ docker container prune -f
 docker volume rm $(docker volume ls -q)
 docker volume ls
 ```
-
-
-
-# Example of commands
-
-```bash
-docker-compose build
-docker-compose build fastbot-ros2-slam
-docker-compose up fastbot-ros2-gazebo
-docker-compose up fastbot-ros2-slam
-docker exec practical_roentgen /bin/bash -c 'source /opt/ros/noetic/setup.bash && rosservice list'
-```
-
-
