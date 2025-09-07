@@ -23,9 +23,10 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /ros2_ws
 
-# Copy your packages into the image (paths are relative to BUILD CONTEXT)
-# Keep description too 
+# Copy packages into the image (paths are relative to BUILD CONTEXT)
 COPY fastbot/fastbot_slam/        src/fastbot_slam/
+COPY fastbot/map_server/        src/map_server/
+COPY fastbot/localization_server/        src/localization_server/
 COPY fastbot/fastbot_description/ src/fastbot_description/
 
 # Build the Colcon workspace and ensure it's sourced
@@ -35,4 +36,5 @@ RUN source /opt/ros/humble/setup.bash \
 RUN echo "source /ros2_ws/install/setup.bash" >> ~/.bashrc
 
 # Source Humble + overlay and launch navigation
-ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_slam navigation.launch.py"]
+# ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_slam navigation.launch.py"]
+ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_slam cartographer.launch.py"]
