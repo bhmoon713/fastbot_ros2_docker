@@ -18,6 +18,7 @@ services:
       - /dev/lslidar:/dev/lslidar
       - /dev/arduino_nano:/dev/arduino_nano
     volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
       - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
     privileged: true
     restart: always

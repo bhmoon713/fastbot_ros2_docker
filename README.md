@@ -154,8 +154,8 @@ docker run --rm -it --net=host --name nginx_container -h nginx_container -p 7000
 sudo usermod -aG docker $USER
 newgrp docker
 ```
-
-
+################################################################################################################
+################################################################################################################
 # For real robot directory
 ```bash
 user:cd ~/ros2_ws/src
@@ -164,10 +164,18 @@ docker build -t bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real -f fastbot_ros2_
 ```
 # You can build all of images at once
 ```bash
+cd fastbot_ros2_docker/real
 user:~/ros2_ws/src/fastbot_ros2_docker/real$ docker-compose up
 user:~/ros2_ws/src$ docker images
 ```
 
+docker network inspect simulation_fastbot_net | grep -i name
+docker network inspect real_fastbot_net | grep -i name
+
+sudo docker exec -it fastbot-ros2-real bash
+sudo docker exec -it fastbot-ros2-slam-real bash
+
+docker run --rm -it --name fastbot-ros2-real   -h fastbot-ros2-real    bhmoon418/bhmoon713-cp22:fastbot-ros2-real
 # For the case something went wrong, below command will clear up dockers and volumes
 
 ```bash
