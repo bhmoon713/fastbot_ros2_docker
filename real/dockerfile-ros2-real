@@ -1,57 +1,59 @@
 FROM osrf/ros:humble-desktop
 
+# Use bash for RUN steps
+SHELL ["/bin/bash", "-c"]
 
-# Change the default shell to Bash
-SHELL [ "/bin/bash" , "-c" ]
+ENV DEBIAN_FRONTEND=noninteractive
+ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
-# Install system and ROS 2 dependencies
-RUN apt-get update && apt-get upgrade -y && apt-get install -y \
-    python3-colcon-common-extensions \
-    python3-pip \
-    python3-setuptools \
+WORKDIR /ros2_ws
+
+# System & ROS 2 deps (no wildcards), camera plugins, tools
+RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
+    git \
     build-essential \
     lsb-release \
     libboost-all-dev \
     libpcap-dev \
     libpcl-dev \
+    v4l-utils \
+    python3-pip \
+    python3-setuptools \
+    python3-colcon-common-extensions \
     ros-humble-xacro \
-    ros-humble-tf2* \
+    ros-humble-tf2-ros \
+    ros-humble-tf2-tools \
+    ros-humble-tf2-geometry-msgs \
+    ros-humble-tf2-eigen \
     ros-humble-joint-state-publisher \
     ros-humble-pcl-conversions \
     ros-humble-pluginlib \
     ros-humble-diagnostic-updater \
     ros-humble-image-transport-plugins \
+    ros-humble-v4l2-camera \
     ros-humble-rmw-cyclonedds-cpp \
-    && rm -rf /var/lib/apt/lists/*
+    ros-humble-cyclonedds \
+ && python3 -m pip install --no-cache-dir pyserial \
+ && rm -rf /var/lib/apt/lists/*
 
-    sudo apt-get update
-    sudo apt-get install -y libpcap-dev
-    rosdep update
-    rosdep install --from-paths src --ignore-src -r -y
+# Create workspace and clone sources
+RUN mkdir -p /ros2_ws/src && cd /ros2_ws/src && \
+    git clone https://github.com/bhmoon713/fastbot_bringup.git && \
+    git clone https://github.com/bhmoon713/fastbot_description.git && \
+    git clone https://github.com/bhmoon713/fastbot_gazebo.git && \
+    git clone https://github.com/bhmoon713/serial_motor.git && \
+    git clone https://github.com/bhmoon713/serial_motor_msgs.git && \
+    git clone -b N10_V1.0 https://github.com/Lslidar/Lslidar_ROS2_driver.git
 
+# Resolve package dependencies (after sources exist)
+RUN apt-get update \
+ && rosdep update \
+ && rosdep install --from-paths /ros2_ws/src --ignore-src -r -y \
+ && rm -rf /var/lib/apt/lists/*
 
+# Build workspace (single build)
+RUN source /opt/ros/humble/setup.bash && \
+    cd /ros2_ws && colcon build --symlink-install
 
-RUN sudo apt install ros-humble-v4l2-camera ros-humble-image-transport-plugins v4l-utils
-
-# Install motor driver dependencies
-RUN python3 -m pip install pyserial
-
-# Create ROS2 workspace
-RUN mkdir -p /ros2_ws/src
-WORKDIR /ros2_ws/src
-
-
-# Clone bring up files to ROS2 workspace
-RUN git clone https://github.com/bhmoon713/fastbot_bringup.git
-RUN git clone https://github.com/bhmoon713/fastbot_description.git
-RUN git clone https://github.com/bhmoon713/fastbot_gazebo.git
-RUN git clone https://github.com/bhmoon713/serial_motor.git
-RUN git clone https://github.com/bhmoon713/serial_motor_msgs.git
-RUN clone -b N10_V1.0 https://github.com/Lslidar/Lslidar_ROS2_driver.git
-
-# Compile
-RUN source /opt/ros/humble/setup.bash && cd /ros2_ws && colcon build --packages-select lslidar_msgs
-RUN source source install/setup.bash && cd /ros2_ws && colcon build --symlink-install
-
-# Launch
-ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_bringup bringup.launch.xml"]
+# Launch bringup by default
+ENTRYPOINT ["/bin/bash", "-lc", "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_bringup bringup.launch.xml"]
