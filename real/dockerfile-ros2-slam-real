@@ -1,33 +1,40 @@
-FROM osrf/ros:humble-desktop-full
-SHELL ["/bin/bash","-lc"]
+FROM osrf/ros:humble-desktop
 
-# System & ROS 2 deps
+# Change the default shell to Bash
+SHELL [ "/bin/bash" , "-c" ]
+
+# Tools + deps for building and running SLAM
 RUN apt-get update && apt-get install -y \
-    python3-colcon-common-extensions \
-    ros-humble-rviz2 \
-    ros-humble-nav2-msgs \
-    ros-humble-nav2-amcl \
-    ros-humble-nav2-map-server \
-    ros-humble-nav2-planner \
-    ros-humble-nav2-bringup \
-    ros-humble-nav2-bt-navigator \
+    python3-colcon-common-extensions build-essential \
     ros-humble-cartographer-ros \
-    ros-humble-rmw-cyclonedds-cpp \
+    ros-humble-robot-state-publisher \
     ros-humble-tf2-ros \
+    ros-humble-slam-toolbox \
+    ros-humble-nav2-bringup \
+    ros-humble-navigation2 \
+    ros-humble-rviz2 \
+    ros-humble-cartographer \
     && rm -rf /var/lib/apt/lists/*
 
-# Workspace
+RUN apt-get update && apt-get install -y \
+    ros-humble-rmw-cyclonedds-cpp \
+    ros-humble-cyclonedds
+
+
 WORKDIR /ros2_ws
-COPY fastbot/ src/fastbot/
 
-# Build once at image build time
-RUN source /opt/ros/humble/setup.bash && colcon build --symlink-install
+# Copy packages into the image (paths are relative to BUILD CONTEXT)
+COPY fastbot/fastbot_slam/        src/fastbot_slam/
+COPY fastbot/map_server/        src/map_server/
+COPY fastbot/localization_server/        src/localization_server/
+COPY fastbot/fastbot_description/ src/fastbot_description/
 
-# Defaults for distributed ROS 2 (tweak at run time if needed)
-ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp \
-    ROS_DOMAIN_ID=42 \
-    ROS_LOCALHOST_ONLY=0
+# Build the Colcon workspace and ensure it's sourced
+RUN source /opt/ros/humble/setup.bash \
+ && cd /ros2_ws \
+ && colcon build
+RUN echo "source /ros2_ws/install/setup.bash" >> ~/.bashrc
 
-# Source + launch SLAM (change to localization.launch.py if not mapping)
-ENTRYPOINT ["/bin/bash","-lc"]
-CMD ["source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_slam cartographer.launch.py"]
+# Source Humble + overlay and launch navigation
+# ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_slam navigation.launch.py"]
+ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_slam cartographer.launch.py"]

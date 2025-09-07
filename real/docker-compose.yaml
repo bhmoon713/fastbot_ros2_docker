@@ -1,44 +1,47 @@
-version: '3'
+version: "3"
+
 services:
   fastbot-ros2-real:
     build:
       context: ${HOME}/ros2_ws/src
       dockerfile: fastbot_ros2_docker/real/dockerfile-ros2-real
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-real
-    container_name: fastbot-ros1-gazebo_1
+    container_name: fastbot-ros2-real
+    cap_add:
+      - NET_ADMIN
     environment:
-      - ROS_DOMAIN_ID=0
+      - XAUTHORITY=${XAUTHORITY}       
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-      - CYCLONEDDS_URI=/var/lib/theconstruct.rrl/cyclonedds.xml
-    volumes:
+      - ROS_DOMAIN_ID=1
+    devices:
       - /dev/video0:/dev/video0
       - /dev/lslidar:/dev/lslidar
       - /dev/arduino_nano:/dev/arduino_nano
-      - ./ros_entrypoint.sh:/ros_entrypoint.sh
-      - /var/lib/theconstruct.rrl/cyclonedds.xml:/var/lib/theconstruct.rrl/cyclonedds.xml
+    volumes:
+      - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
     privileged: true
-    # network_mode: host
     restart: always
-    entrypoint: /ros_entrypoint.sh
-    command: ["ros2 launch fastbot_bringup bringup.launch.xml"]
-  
+
+    networks:
+      - fastbot_net
+
+
   fastbot-ros2-slam-real:
     build:
       context: ${HOME}/ros2_ws/src
       dockerfile: fastbot_ros2_docker/real/dockerfile-ros2-slam-real
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
-    container_name: fastbot-ros1-slam_1
+    container_name: fastbot-ros2-slam-real
     environment:
       - DISPLAY=${DISPLAY}
-      - ROS_DOMAIN_ID=42
+      - XAUTHORITY=${XAUTHORITY}    
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-      - CYCLONEDDS_URI=/var/lib/theconstruct.rrl/cyclonedds.xml
+      - ROS_DOMAIN_ID=1
     volumes:
-      - ./ros_entrypoint.sh:/ros_entrypoint.sh
-      - /var/lib/theconstruct.rrl/cyclonedds.xml:/var/lib/theconstruct.rrl/cyclonedds.xml
       - /tmp/.X11-unix:/tmp/.X11-unix
-    privileged: true
-    # network_mode: host
-    restart: always
-    entrypoint: /ros_entrypoint.sh
-    command: ["sleep 8 && ros2 launch fastbot_slam navigation.launch.py"]
+      - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
+    networks:
+      - fastbot_net
+
+networks:
+  fastbot_net:
