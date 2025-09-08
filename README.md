@@ -17,22 +17,18 @@ sudo service docker restart
 sudo apt-get install -y x11-xserver-utils
 ```
 
-# Simulation Docker files are located in below directory
+# You want to download from docker hub and run.
 ```bash
-user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ ls
-docker-compose.yaml 
-dockerfile-gazebo 
-dockerfile-slam 
-dockerfile-webapp entrypoint.sh
-my-site.conf
+cd ~/ros2_ws/src/fastbot_ros2_docker/simulation
+user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ xhost +local:root
+user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ docker-compose up
 ```
 
-
-# You want to skip indiviual build process you can build at docker-compose.
+# You want to build locally and run. Remove hash tag for build at compose file
 ```bash
-user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ docker-compose up --build
+cd ~/ros2_ws/src/fastbot_ros2_docker/simulation
+user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ docker-compose up --build 
 ```
-
 
 
 # Build image per each package
@@ -48,14 +44,6 @@ bhmoon418/bhmoon713-cp22:fastbot-ros2-webapp #This Docker image will contain eve
 bhmoon418/bhmoon713-cp22:fastbot-ros2-slam #This Docker image will contain everything necessary for starting the Mapping system.
 bhmoon418/bhmoon713-cp22:fastbot-ros2-gazebo #This Docker image will contain everything necessary for starting the Gazebo simulation in ROS2.
 ```
-
-# You can build and execute all of images at once
-```bash
-user: cd ~/ros2_ws/src/fastbot_ros2_docker/simulation
-user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ xhost +local:root
-user:~/ros2_ws/src/fastbot_ros2_docker/simulation$ docker-compose up
-```
-
 
 ## Check the network, it should show three attachments
 
@@ -156,7 +144,22 @@ newgrp docker
 ```
 ################################################################################################################
 ################################################################################################################
-# For real robot directory
+
+# You want to download from docker hub and run.
+```bash
+cd ~/ros2_ws/src/fastbot_ros2_docker/real
+user:~/ros2_ws/src/fastbot_ros2_docker/real$ docker-compose up
+```
+
+# You want to build locally and run.
+```bash
+cd ~/ros2_ws/src/fastbot_ros2_docker/real
+user:~/ros2_ws/src/fastbot_ros2_docker/real$ xhost +local:root
+user:~/ros2_ws/src/fastbot_ros2_docker/real$ docker-compose up 
+```
+
+
+# build individual docker real robot directory
 ```bash
 user:cd ~/ros2_ws/src
 docker build -t bhmoon418/bhmoon713-cp22:fastbot-ros2-real -f fastbot_ros2_docker/real/dockerfile-ros2-real .
@@ -169,13 +172,16 @@ user:~/ros2_ws/src/fastbot_ros2_docker/real$ docker-compose up
 user:~/ros2_ws/src$ docker images
 ```
 
+# Check network
 docker network inspect simulation_fastbot_net | grep -i name
 docker network inspect real_fastbot_net | grep -i name
 
+# Check in container for debug
 sudo docker exec -it fastbot-ros2-real bash
 sudo docker exec -it fastbot-ros2-slam-real bash
 
 docker run --rm -it --name fastbot-ros2-real   -h fastbot-ros2-real    bhmoon418/bhmoon713-cp22:fastbot-ros2-real
+
 # For the case something went wrong, below command will clear up dockers and volumes
 
 ```bash
