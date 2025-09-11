@@ -13,11 +13,11 @@ fastbot@fastbot:~$ sudo apt-get install -y docker.io docker-compose
 fastbot@fastbot:~$ sudo service docker start
 fastbot@fastbot:~$ sudo usermod -aG docker fastbot
 fastbot@fastbot:~$ newgrp docker
-fastbot@fastbot:~$ sudo apt-get install -y x11-xserver-utils
+
 fastbot@fastbot:~$ cd ros2_ws/src
+fastbot@fastbot:~/ros2_ws/src$ rm -rf fastbot_ros2_docker/
 fastbot@fastbot:~/ros2_ws/src$ git clone https://github.com/bhmoon713/fastbot_ros2_docker.git
 fastbot@fastbot:~/ros2_ws/src$ cd fastbot_ros2_docker/real/
-fastbot@fastbot:~/ros2_ws/src/fastbot_ros2_docker/real$ xhost +local:root
 fastbot@fastbot:~/ros2_ws/src/fastbot_ros2_docker/real$ docker-compose up
 ```
 

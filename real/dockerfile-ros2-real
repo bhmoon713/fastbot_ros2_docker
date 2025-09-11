@@ -1,4 +1,4 @@
-FROM osrf/ros:humble-desktop
+FROM ros:humble-desktop
 
 # Use bash for RUN steps
 SHELL ["/bin/bash", "-c"]

@@ -1,4 +1,4 @@
-FROM osrf/ros:humble-desktop
+FROM ros:humble-desktop
 
 # Change the default shell to Bash
 SHELL [ "/bin/bash" , "-c" ]
