@@ -39,14 +39,15 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
 # Create workspace and clone sources
 RUN mkdir -p /ros2_ws/src && cd /ros2_ws/src && \
     git clone https://github.com/bhmoon713/fastbot_bringup.git && \
-    # git clone https://github.com/bhmoon713/fastbot_description.git && \
-    # git clone https://github.com/bhmoon713/fastbot_gazebo.git && \
+#    git clone https://github.com/bhmoon713/fastbot_description.git && \
+    git clone https://github.com/bhmoon713/fastbot_gazebo.git && \
     git clone https://github.com/bhmoon713/serial_motor.git && \
     git clone https://github.com/bhmoon713/serial_motor_msgs.git && \
     git clone -b N10_V1.0 https://github.com/Lslidar/Lslidar_ROS2_driver.git
 
+# COPY fastbot/ src/fastbot
 COPY fastbot/fastbot_description/ src/fastbot_description/
-COPY fastbot/fastbot_gazebo/      src/fastbot_gazebo/
+# COPY fastbot/fastbot_gazebo/      src/fastbot_gazebo/
 # COPY fastbot/serial_motor/     src/serial_motor/ 
 # COPY fastbot/serial_motor_msgs/      src/serial_motor_msgs/ 
 # COPY fastbot/Lslidar_ROS2_driver/      src/Lslidar_ROS2_driver/ 

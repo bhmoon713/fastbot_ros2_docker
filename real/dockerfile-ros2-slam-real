@@ -24,6 +24,8 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /ros2_ws
 
 # Copy packages into the image (paths are relative to BUILD CONTEXT)
+
+# COPY fastbot/ src/fastbot
 COPY fastbot/fastbot_slam/        src/fastbot_slam/
 COPY fastbot/map_server/        src/map_server/
 COPY fastbot/localization_server/        src/localization_server/
