@@ -1,4 +1,7 @@
-FROM ros:humble-desktop
+# dockerfile-ros2-real  (ARM64-friendly)
+FROM ros:humble-ros-base
+# FROM arm64v8/ros:humble-ros-base-jammy
+# FROM arm64v8/ros:humble-ros-base
 
 # Use bash for RUN steps
 SHELL ["/bin/bash", "-c"]
@@ -53,7 +56,10 @@ COPY fastbot/fastbot_description/ src/fastbot_description/
 # COPY fastbot/Lslidar_ROS2_driver/      src/Lslidar_ROS2_driver/ 
 COPY fastbot/Lslidar_ROS2_driver/lslidar_driver/params/lsx10.yaml \
      src/Lslidar_ROS2_driver/lslidar_driver/params/
+COPY fastbot/Lslidar_ROS2_driver/lslidar_driver/launch/lslidar_launch.py \
+     src/Lslidar_ROS2_driver/lslidar_driver/launch/
 
+COPY fastbot_ros2_docker/real/config.txt    /boot/firmware/
 
 # Resolve package dependencies (after sources exist)
 RUN apt-get update \

@@ -1,4 +1,8 @@
-FROM ros:humble-desktop
+# dockerfile-ros2-real  (ARM64-friendly)
+FROM ros:humble-ros-base
+# FROM arm64v8/ros:humble-ros-base-jammy
+# FROM arm64v8/ros:humble-ros-base
+
 
 # Change the default shell to Bash
 SHELL [ "/bin/bash" , "-c" ]
