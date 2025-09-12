@@ -2,9 +2,9 @@ version: "3"
 
 services:
   fastbot-ros2-real:
-    build:
-      context: ${HOME}/ros2_ws/src
-      dockerfile: fastbot_ros2_docker/real/dockerfile-ros2-real
+    # build:
+    #   context: ${HOME}/ros2_ws/src
+    #   dockerfile: fastbot_ros2_docker/real/dockerfile-ros2-real
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-real
     container_name: fastbot-ros2-real
     cap_add:
@@ -37,9 +37,9 @@ services:
 
 
   fastbot-ros2-slam-real:
-    build:
-      context: ${HOME}/ros2_ws/src
-      dockerfile: fastbot_ros2_docker/real/dockerfile-ros2-slam-real
+    # build:
+    #   context: ${HOME}/ros2_ws/src
+    #   dockerfile: fastbot_ros2_docker/real/dockerfile-ros2-slam-real
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
     container_name: fastbot-ros2-slam-real
     environment:

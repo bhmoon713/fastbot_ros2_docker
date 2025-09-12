@@ -118,3 +118,20 @@ bhmoon418
 g.q.4xMN2E5bBDG
 docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-real
 docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
+
+
+## Use Jenkins
+cd webpage_ws
+./start_jenkins.sh
+
+See '/home/user/jenkins__pid__url.txt' for Jenkins PID and URL.
+and move to that address 
+
+id: admin
+pw: 12345
+
+and run "CP22 real robot docker image automation _ Build here"
+This automates the docker image build and deplpy at fastbot.
+1. it build two images
+2. push to docker hub
+3. and ssh into fastbot, run docker-compose up at robot. it starts robot automatically
