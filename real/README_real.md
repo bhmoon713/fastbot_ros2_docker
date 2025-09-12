@@ -21,7 +21,7 @@ fastbot@fastbot:~$ newgrp docker
 
 ```bash
 fastbot@fastbot:~$ cd ros2_ws/src
-fastbot@fastbot:~/ros2_ws/src$ rm -rf fastbot_ros2_docker/
+fastbot@fastbot:~/ros2_ws/src$ sudo rm -rf fastbot_ros2_docker/
 fastbot@fastbot:~/ros2_ws/src$ git clone https://github.com/bhmoon713/fastbot_ros2_docker.git
 fastbot@fastbot:~/ros2_ws/src$ cd fastbot_ros2_docker/real/
 fastbot@fastbot:~/ros2_ws/src/fastbot_ros2_docker/real$ docker-compose up
