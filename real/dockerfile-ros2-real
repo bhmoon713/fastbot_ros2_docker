@@ -60,6 +60,8 @@ COPY fastbot/Lslidar_ROS2_driver/lslidar_driver/launch/lslidar_launch.py \
      src/Lslidar_ROS2_driver/lslidar_driver/launch/
 
 COPY fastbot_ros2_docker/real/config.txt    /boot/firmware/
+COPY fastbot_ros2_docker/real/lslidar.rules    /etc/udev/rules.d/
+COPY fastbot_ros2_docker/real/arduino_nano.rules    /etc/udev/rules.d/
 
 # Resolve package dependencies (after sources exist)
 RUN apt-get update \

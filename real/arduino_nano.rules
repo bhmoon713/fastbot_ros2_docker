@@ -1,0 +1,2 @@
+# /etc/udev/rules.d/99-arduino_nano.rules
+SUBSYSTEM=="tty", ATTRS{idVendor}=="1a86", ATTRS{idProduct}=="7523", SYMLINK+="arduino_nano"

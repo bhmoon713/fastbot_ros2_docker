@@ -32,6 +32,7 @@ fastbot@fastbot:~/ros2_ws/src/fastbot_ros2_docker/real$ docker-compose up
 ```bash
 sudo apt-get update
 sudo apt-get install -y docker.io docker-compose
+
 sudo service docker start
 
 sudo usermod -aG docker $USER
@@ -89,3 +90,27 @@ docker container prune -f
 docker volume rm $(docker volume ls -q)
 docker volume ls
 ```
+
+
+fastbot@fastbot:~$ sudo nano /etc/udev/rules.d/arduino_nano.rules
+fastbot@fastbot:~$ sudo nano /etc/udev/rules.d/arduino_nano.rules
+fastbot@fastbot:~$ sudo nano /etc/udev/rules.d/lslidar.rules
+fastbot@fastbot:~$ sudo nano /etc/udev/rules.d/arduino_nano.rules
+
+sudo udevadm control --reload-rules
+sudo udevadm trigger
+
+
+## docker push command
+docker login
+bhmoon418
+g.q.4xMN2E5bBDG
+docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-real
+docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
+
+## git push
+docker login
+bhmoon418
+g.q.4xMN2E5bBDG
+docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-real
+docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
