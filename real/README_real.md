@@ -31,6 +31,7 @@ fastbot@fastbot:~/ros2_ws/src/fastbot_ros2_docker/real$ docker-compose up
 
 ```bash
 sudo apt-get update
+
 sudo apt-get install -y docker.io docker-compose
 
 sudo service docker start
@@ -77,6 +78,9 @@ root@cd308b0e1118:/ros2_ws# ros2 run teleop_twist_keyboard teleop_twist_keyboard
 ## Check each docker container : fastbot-ros2-slam-real
 ```bash
 sudo docker exec -it fastbot-ros2-slam-real bash
+source /opt/ros/humble/setup.bash
+source install/setup.bash
+
 root@cd308b023452:
 ```
 ## Check network
