@@ -25,7 +25,7 @@ RUN apt-get update && apt-get install -y \
     ros-humble-cyclonedds
 
 
-WORKDIR /ros2_ws
+WORKDIR /ros2_ws/src
 
 # Copy packages into the image (paths are relative to BUILD CONTEXT)
 

@@ -135,3 +135,14 @@ This automates the docker image build and deplpy at fastbot.
 1. it build two images
 2. push to docker hub
 3. and ssh into fastbot, run docker-compose up at robot. it starts robot automatically
+
+
+## Check each docker container : fastbot-ros2-real
+Goto other terminal at your computer
+```bash
+sudo usermod -aG docker $USER
+newgrp docker
+docker exec -it fastbot-ros2-real bash
+root@cd308b0e1118:$ cd ~/ros2_ws/src
+root@cd308b0e1118:/ros2_ws# ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args --remap cmd_vel:=fastbot/cmd_vel
+```
