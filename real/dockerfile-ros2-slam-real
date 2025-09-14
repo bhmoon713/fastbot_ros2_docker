@@ -25,13 +25,14 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /ros2_ws/src
 # Copy packages into the image (paths are relative to BUILD CONTEXT)
 RUN git clone https://github.com/bhmoon713/fastbot_description.git
+RUN git clone https://github.com/bhmoon713/fastbot_slam.git
 # COPY fastbot/fastbot_description/ src/fastbot_description/
 # COPY fastbot/ src/fastbot
 
 # NOTE: Because WORKDIR is /ros2_ws/src, use destinations without a leading "src/"
-COPY fastbot/map_server/           map_server/
-COPY fastbot/localization_server/  localization_server/
-COPY fastbot/fastbot_slam/         fastbot_slam/
+# COPY fastbot/map_server/           map_server/
+# COPY fastbot/localization_server/  localization_server/
+# COPY fastbot/fastbot_slam/         fastbot_slam/
 
 # Ensure Gazebo classic model path exists before copying
 RUN mkdir -p /usr/share/gazebo-11/models/fastbot_description

@@ -94,6 +94,7 @@ docker kill $(docker ps -aq) &> /dev/null;
 docker container prune -f
 docker volume rm $(docker volume ls -q)
 docker volume ls
+docker rmi -f $(docker images -aq)
 ```
 
 
