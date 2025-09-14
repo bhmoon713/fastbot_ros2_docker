@@ -1,0 +1,38 @@
+version: '3'
+services:
+  fastbot-ros2-real:
+    image: bhmoon418/bhmoon713-cp22:fastbot-ros2-real_2
+    container_name: fastbot-ros2-real_2
+    environment:
+      - ROS_DOMAIN_ID=0
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - CYCLONEDDS_URI=/var/lib/theconstruct.rrl/cyclonedds.xml
+    volumes:
+      - /dev/video0:/dev/video0
+      - /dev/lslidar:/dev/lslidar
+      - /dev/arduino_nano:/dev/arduino_nano
+      - ./ros_entrypoint.sh:/ros_entrypoint.sh
+      - /var/lib/theconstruct.rrl/cyclonedds.xml:/var/lib/theconstruct.rrl/cyclonedds.xml
+    privileged: true
+    network_mode: host
+    restart: always
+    # entrypoint: /ros_entrypoint.sh
+    # command: ["ros2 launch fastbot_bringup bringup.launch.xml"]
+  
+  fastbot-ros2-real-slam:
+    image: bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real_2
+    container_name: fastbot-ros2-slam-real_2
+    environment:
+      - DISPLAY=${DISPLAY}
+      - ROS_DOMAIN_ID=0
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - CYCLONEDDS_URI=/var/lib/theconstruct.rrl/cyclonedds.xml
+    volumes:
+      - ./ros_entrypoint.sh:/ros_entrypoint.sh
+      - /var/lib/theconstruct.rrl/cyclonedds.xml:/var/lib/theconstruct.rrl/cyclonedds.xml
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    privileged: true
+    network_mode: host
+    restart: always
+    # entrypoint: /ros_entrypoint.sh
+    # command: ["sleep 8 && ros2 launch fastbot_slam cartographer.launch.py"]
