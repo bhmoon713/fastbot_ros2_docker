@@ -1,0 +1,20 @@
+# Minimal test image for Raspberry Pi (ARM64) build
+FROM ros:humble-ros-base
+
+# Use bash for convenience (not strictly required)
+SHELL ["/bin/bash", "-lc"]
+
+# Optional: a spot to drop a test file at build time
+WORKDIR /test
+RUN echo "Built on: $(uname -m)" > built.txt
+
+# On run, print a few quick checks then exit
+CMD bash -lc '\
+  echo "---- Runtime checks ----"; \
+  echo "Architecture: $(uname -m)"; \
+  echo "ROS distro: ${ROS_DISTRO}"; \
+  echo "ROS2 version:"; ros2 --version; \
+  echo "---- ls -la / ----"; ls -la /; \
+  echo "---- ls -la /test ----"; ls -la /test; \
+  echo "Done." \
+'

@@ -83,15 +83,7 @@ root@cd308b023452:
 ## Check network
 docker network inspect real_fastbot_net | grep -i name
 
-## For the case something went wrong, below command will clear up dockers and volumes
 
-```bash
-docker kill $(docker ps -aq) &> /dev/null;
-docker container prune -f
-docker volume rm $(docker volume ls -q)
-docker volume ls
-docker rmi -f $(docker images -aq)
-```
 
 
 fastbot@fastbot:~$ sudo nano /etc/udev/rules.d/arduino_nano.rules
@@ -145,8 +137,32 @@ root@cd308b0e1118:$ cd ~/ros2_ws/src
 root@cd308b0e1118:/ros2_ws# ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args --remap cmd_vel:=fastbot/cmd_vel
 ```
 
+```bash
 docker tag bhmoon418/bhmoon713-cp22:fastbot-ros2-real \
            bhmoon418/bhmoon713-cp22:fastbot-ros2-real-arm64
 
 docker tag bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real \
            bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real-arm64
+```
+
+
+## For testing new setuo to build arm compatible docker image
+
+```bash
+cd ~/ros2_ws/src
+docker kill $(docker ps -aq) &> /dev/null;
+docker container prune -f
+docker volume rm $(docker volume ls -q)
+docker volume ls
+docker rmi -f $(docker images -aq)
+
+rm -rf fastbot_ros2_docker/
+git clone https://github.com/bhmoon713/fastbot_ros2_docker.git
+
+docker build -t bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real -f fastbot_ros2_docker/real/dockerfile-ros2-slam-real .
+docker build -t bhmoon418/bhmoon713-cp22:fastbot-ros2-real -f fastbot_ros2_docker/real/dockerfile-ros2-real .
+
+docker build -f fastbot_ros2_docker/real/dockerfile-simple -t arm64-ros-test .
+docker run -it --rm arm64-ros-test bash
+
+
