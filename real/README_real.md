@@ -18,7 +18,7 @@ fastbot@fastbot:~$ sudo service docker start
 fastbot@fastbot:~$ sudo usermod -aG docker fastbot
 fastbot@fastbot:~$ newgrp docker
 ```
-
+now required package installed and download git and pull docker image and run both dockers.
 ```bash
 fastbot@fastbot:~$ cd ros2_ws/src
 fastbot@fastbot:~/ros2_ws/src$ sudo rm -rf fastbot_ros2_docker/
@@ -105,6 +105,7 @@ docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
 ## git push
 docker login
 bhmoon418
+or docker login -u bhmoon418
 g.q.4xMN2E5bBDG
 docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-real
 docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real

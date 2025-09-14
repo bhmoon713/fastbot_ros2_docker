@@ -18,16 +18,24 @@ services:
       # - /dev/lslidar:/dev/lslidar
       # - /dev/arduino_nano:/dev/arduino_nano
       # Likely your Arduino Nano (CDC ACM):
-      - /dev/serial/by-id/usb-1a86_USB_Single_Serial_5A6D016743-if00:/dev/arduino_nano
+      # - /dev/serial/by-id/usb-1a86_USB_Single_Serial_5A6D016743-if00:/dev/arduino_nano
       # Likely your LiDAR (CH340 USB-serial):
-      - /dev/serial/by-id/usb-1a86_USB_Serial-if00-port0:/dev/lslidar
+      # - /dev/serial/by-id/usb-1a86_USB_Serial-if00-port0:/dev/lslidar
       # Camera passthrough as before:
-      - /dev/video0:/dev/video0
+      # - /dev/video0:/dev/video0
       # - /dev/video0:/dev/video0
       # - /dev/ttyACM0:/dev/lslidar
       # - /dev/ttyUSB0:/dev/arduino_nano
     volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
+        volumes: 
+      - /var/lib/theconstruct.rrl/cyclonedds.xml:/var/lib/theconstruct.rrl/cyclonedds.xml
+      - /dev:/dev
+      - /dev/video0:/dev/video0
+      - ./volumes/ros_entrypoint.sh:/ros_entrypoint.sh
+      - ./volumes/bringup.sh:/bringup.sh
+      - ./volumes/bringup.launch.xml:/root/ros2_ws/install/fastbot_bringup/share/fastbot_bringup/launch/bringup.launch.xml 
+      - ./volumes/raspicam_camera_info.yaml:/root/.ros/camera_info/mmal_service_16.1.yaml
+      # - /tmp/.X11-unix:/tmp/.X11-unix
       - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
     privileged: true
     restart: always
