@@ -20,8 +20,8 @@ services:
     command: ["ros2 launch fastbot_bringup bringup.launch.xml"]
   
   fastbot-ros2-real-slam:
-    image: bhmoon418/bhmoon713-cp22:fastbot-ros2-real-slam
-    container_name: fastbot-ros2-real-slam
+    image: bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
+    container_name: fastbot-ros2-slam-real
     environment:
       - DISPLAY=${DISPLAY}
       - ROS_DOMAIN_ID=0
