@@ -57,6 +57,9 @@ RUN mkdir -p /ros2_ws/src && cd /ros2_ws/src && \
 # COPY fastbot/Lslidar_ROS2_driver/      src/Lslidar_ROS2_driver/ 
 
 # IMPORTANT: our WORKDIR is /ros2_ws/src below, so destinations should NOT start with "src/"
+RUN mkdir -p /usr/share/gazebo-11/models/fastbot_description
+COPY fastbot/fastbot_description/  /usr/share/gazebo-11/models/fastbot_description/
+
 WORKDIR /ros2_ws/src
 RUN mkdir -p Lslidar_ROS2_driver/lslidar_driver/params \
              Lslidar_ROS2_driver/lslidar_driver/launch

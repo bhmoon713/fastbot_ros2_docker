@@ -32,16 +32,12 @@ fastbot@fastbot:~/ros2_ws/src/fastbot_ros2_docker/real$ docker-compose up
 
 ```bash
 sudo apt-get update
-
 sudo apt-get install -y docker.io docker-compose
-
 sudo service docker start
-
 sudo usermod -aG docker $USER
 newgrp docker
-
-sudo service docker restart
 sudo apt-get install -y x11-xserver-utils
+sudo apt-get update && sudo apt-get install -y sshpass
 ```
 
 ## You want to download from docker hub and run.
