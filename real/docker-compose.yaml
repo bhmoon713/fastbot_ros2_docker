@@ -27,7 +27,6 @@ services:
       # - /dev/ttyACM0:/dev/lslidar
       # - /dev/ttyUSB0:/dev/arduino_nano
     volumes:
-        volumes: 
       - /var/lib/theconstruct.rrl/cyclonedds.xml:/var/lib/theconstruct.rrl/cyclonedds.xml
       - /dev:/dev
       - /dev/video0:/dev/video0
