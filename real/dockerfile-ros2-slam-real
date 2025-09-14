@@ -1,42 +1,53 @@
-# dockerfile-ros2-slam-real (ARM64-friendly, headless-ready)
+# dockerfile-ros2-real  (ARM64-friendly)
 FROM ros:humble-ros-base
+# FROM arm64v8/ros:humble-ros-base-jammy
+# FROM arm64v8/ros:humble-ros-base
 
-SHELL ["/bin/bash","-c"]
+# Change the default shell to Bash
+SHELL [ "/bin/bash" , "-c" ]
+
+# Tools + deps for building and running SLAM
 ENV DEBIAN_FRONTEND=noninteractive
-ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-WORKDIR /ros2_ws
-
-# Core deps for SLAM / Nav2 (no GUI by default; add rviz2 only if you’ll display on the Pi)
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3-colcon-common-extensions build-essential python3-rosdep \
-    ros-humble-cartographer-ros ros-humble-cartographer \
+RUN apt-get update && apt-get install -y \
+    python3-colcon-common-extensions build-essential \
+    ros-humble-cartographer-ros \
+    ros-humble-robot-state-publisher \
+    ros-humble-tf2-ros \
     ros-humble-slam-toolbox \
-    ros-humble-nav2-bringup ros-humble-navigation2 \
-    ros-humble-robot-state-publisher ros-humble-tf2-ros \
-    ros-humble-rmw-cyclonedds-cpp ros-humble-cyclonedds \
+    ros-humble-nav2-bringup \
+    ros-humble-navigation2 \
+    ros-humble-rviz2 \
+    ros-humble-cartographer \
+    ros-humble-rmw-cyclonedds-cpp \
+    ros-humble-cyclonedds \
  && rm -rf /var/lib/apt/lists/*
 
-# (Optional) if you want RViz on the Pi display:
-# RUN apt-get update && apt-get install -y --no-install-recommends ros-humble-rviz2 && rm -rf /var/lib/apt/lists/*
+WORKDIR /ros2_ws/src
+# Copy packages into the image (paths are relative to BUILD CONTEXT)
+RUN git clone https://github.com/bhmoon713/fastbot_description_cp22.git fastbot_description  && \
+    git clone https://github.com/bhmoon713/fastbot_slam.git
+# COPY fastbot/fastbot_description/ src/fastbot_description/
+# COPY fastbot/ src/fastbot
 
-# Sources
-RUN mkdir -p /ros2_ws/src && cd /ros2_ws/src && \
-    git clone --depth=1 https://github.com/bhmoon713/fastbot_description_cp22.git fastbot_description && \
-    git clone --depth=1 https://github.com/bhmoon713/fastbot_slam.git
+# NOTE: Because WORKDIR is /ros2_ws/src, use destinations without a leading "src/"
+# COPY fastbot/map_server/           map_server/
+# COPY fastbot/localization_server/  localization_server/
+# COPY fastbot/fastbot_slam/         fastbot_slam/
 
-# Resolve package deps discovered via package.xml
-RUN apt-get update && rosdep update && \
-    rosdep install --from-paths /ros2_ws/src --ignore-src -r -y && \
-    rm -rf /var/lib/apt/lists/*
+# Ensure Gazebo classic model path exists before copying
+RUN mkdir -p /usr/share/gazebo-11/models/fastbot_description && \
+    cp -a /ros2_ws/src/fastbot_description/. /usr/share/gazebo-11/models/fastbot_description/
 
-# Build
-RUN source /opt/ros/humble/setup.bash && colcon build --symlink-install
 
-# (Optional) bake a Cyclone DDS config so you don’t need to bind-mount it
-# COPY fastbot_ros2_docker/real/cyclonedds.xml /etc/cyclonedds.xml
+# Build the Colcon workspace and ensure it's sourced
+WORKDIR /ros2_ws
+RUN source /opt/ros/humble/setup.bash && colcon build
+RUN echo "source /ros2_ws/install/setup.bash" >> ~/.bashrc
 
-# Entrypoint + default command (cartographer by default)
-COPY fastbot_ros2_docker/real/ros_entrypoint.sh /ros_entrypoint.sh
-RUN chmod +x /ros_entrypoint.sh
-ENTRYPOINT ["/ros_entrypoint.sh"]
-CMD ["ros2","launch","fastbot_slam","cartographer.launch.py"]
+# If you want to expose your workspace packages as models, add the workspace src to the model path
+# (set base first, then append existing if present)
+ENV GAZEBO_MODEL_PATH=/ros2_ws/src:${GAZEBO_MODEL_PATH}
+
+# Source Humble + overlay and launch navigation
+# ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_slam navigation.launch.py"]
+ENTRYPOINT ["/bin/bash", "-c", "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_slam cartographer.launch.py"]

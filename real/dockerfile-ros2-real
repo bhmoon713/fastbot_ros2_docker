@@ -1,61 +1,95 @@
-# dockerfile-ros2-real (ARM64-friendly)
+# dockerfile-ros2-real  (ARM64-friendly)
 FROM ros:humble-ros-base
+# FROM arm64v8/ros:humble-ros-base-jammy
+# FROM arm64v8/ros:humble-ros-base
 
+# Use bash for RUN steps
 SHELL ["/bin/bash", "-c"]
+
 ENV DEBIAN_FRONTEND=noninteractive
 ENV RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
 
 WORKDIR /ros2_ws
 
-# Deps (keep one apt layer)
+# System & ROS 2 deps (no wildcards), camera plugins, tools
 RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-recommends \
-    git build-essential lsb-release \
-    libboost-all-dev libpcap-dev libpcl-dev v4l-utils \
-    python3-pip python3-setuptools python3-colcon-common-extensions python3-rosdep \
+    git \
+    build-essential \
+    lsb-release \
+    libboost-all-dev \
+    libpcap-dev \
+    libpcl-dev \
+    v4l-utils \
+    python3-pip \
+    python3-setuptools \
+    python3-colcon-common-extensions \
+    python3-rosdep \
     ros-humble-xacro \
-    ros-humble-tf2-ros ros-humble-tf2-tools ros-humble-tf2-geometry-msgs ros-humble-tf2-eigen \
-    ros-humble-joint-state-publisher ros-humble-pcl-conversions \
-    ros-humble-pluginlib ros-humble-diagnostic-updater \
-    ros-humble-image-transport-plugins ros-humble-v4l2-camera \
-    ros-humble-rmw-cyclonedds-cpp ros-humble-cyclonedds \
+    ros-humble-tf2-ros \
+    ros-humble-tf2-tools \
+    ros-humble-tf2-geometry-msgs \
+    ros-humble-tf2-eigen \
+    ros-humble-joint-state-publisher \
+    ros-humble-pcl-conversions \
+    ros-humble-pluginlib \
+    ros-humble-diagnostic-updater \
+    ros-humble-image-transport-plugins \
+    ros-humble-v4l2-camera \
+    ros-humble-rmw-cyclonedds-cpp \
+    ros-humble-cyclonedds \
  && python3 -m pip install --no-cache-dir pyserial \
  && rm -rf /var/lib/apt/lists/*
 
-# Sources
+# Create workspace and clone sources
 RUN mkdir -p /ros2_ws/src && cd /ros2_ws/src && \
-    git clone --depth=1 https://github.com/bhmoon713/fastbot_bringup.git && \
-    git clone --depth=1 https://github.com/bhmoon713/fastbot_description_cp22.git fastbot_description && \
-    git clone --depth=1 https://github.com/bhmoon713/serial_motor.git && \
-    git clone --depth=1 https://github.com/bhmoon713/serial_motor_msgs.git && \
-    git clone --depth=1 -b N10_V1.0 https://github.com/Lslidar/Lslidar_ROS2_driver.git
+    git clone https://github.com/bhmoon713/fastbot_bringup.git && \
+    git clone https://github.com/bhmoon713/fastbot_description_cp22.git fastbot_description && \
+    # git clone https://github.com/bhmoon713/fastbot_gazebo.git && \
+    git clone https://github.com/bhmoon713/serial_motor.git && \
+    git clone https://github.com/bhmoon713/serial_motor_msgs.git && \
+    git clone -b N10_V1.0 https://github.com/Lslidar/Lslidar_ROS2_driver.git
 
-# (If you truly need these Gazebo assets, but Gazebo isn't installed in this image, it's okay to just stage them)
+# COPY fastbot/ src/fastbot
+# COPY fastbot/fastbot_description/ src/fastbot_description/
+# COPY fastbot/fastbot_gazebo/      src/fastbot_gazebo/
+# COPY fastbot/serial_motor/     src/serial_motor/ 
+# COPY fastbot/serial_motor_msgs/      src/serial_motor_msgs/ 
+# COPY fastbot/Lslidar_ROS2_driver/      src/Lslidar_ROS2_driver/ 
+
+# IMPORTANT: our WORKDIR is /ros2_ws/src below, so destinations should NOT start with "src/"
 RUN mkdir -p /usr/share/gazebo-11/models/fastbot_description && \
     cp -a /ros2_ws/src/fastbot_description/. /usr/share/gazebo-11/models/fastbot_description/
 
 WORKDIR /ros2_ws/src
-RUN mkdir -p Lslidar_ROS2_driver/lslidar_driver/params Lslidar_ROS2_driver/lslidar_driver/launch fastbot_description/models
+RUN mkdir -p Lslidar_ROS2_driver/lslidar_driver/params \
+             Lslidar_ROS2_driver/lslidar_driver/launch
 
-# NOTE: these COPY paths must exist in your *build context*. Adjust if your build context differs.
-COPY fastbot_ros2_docker/real/lsx10.yaml        Lslidar_ROS2_driver/lslidar_driver/params/
-COPY fastbot_ros2_docker/real/lslidar_launch.py Lslidar_ROS2_driver/lslidar_driver/launch/
-RUN mkdir -p /boot/firmware && true
-COPY fastbot_ros2_docker/real/config.txt        /boot/firmware/
+RUN mkdir -p fastbot_description/models
 
-# rosdep (inside container it's fine to skip init and just update)
-RUN apt-get update && rosdep update && \
-    rosdep install --from-paths /ros2_ws/src --ignore-src -r -y && \
-    rm -rf /var/lib/apt/lists/*
+COPY fastbot_ros2_docker/real/lsx10.yaml \
+     Lslidar_ROS2_driver/lslidar_driver/params/
+COPY fastbot_ros2_docker/real/lslidar_launch.py \
+     Lslidar_ROS2_driver/lslidar_driver/launch/
 
-# Build
+# If you intend to read this from the host Pi boot partition, you’ll need to bind-mount it at runtime.
+# Inside the image we just ensure the path exists for completeness.
+RUN mkdir -p /boot/firmware
+COPY fastbot_ros2_docker/real/config.txt    /boot/firmware/
+# COPY fastbot_ros2_docker/real/lslidar.rules    /etc/udev/rules.d/
+# COPY fastbot_ros2_docker/real/arduino_nano.rules    /etc/udev/rules.d/
+
+# Resolve package dependencies (after sources exist)
+# (rosdep will warn about running as root; safe to ignore inside containers)
+RUN apt-get update \
+ && rosdep update \
+ && rosdep install --from-paths /ros2_ws/src --ignore-src -r -y \
+ && rm -rf /var/lib/apt/lists/*
+
+# Build workspace (single build)
+# Build (single pass is fine; keep two-pass if you really need it)
 WORKDIR /ros2_ws
-RUN source /opt/ros/humble/setup.bash && colcon build --symlink-install
+RUN source /opt/ros/humble/setup.bash && \
+    colcon build --symlink-install
 
-# Optional: place your Cyclone DDS config in the image so you don't need a bind mount
-# COPY fastbot_ros2_docker/real/cyclonedds.xml /etc/cyclonedds.xml
-
-# Entrypoint + default command
-COPY fastbot_ros2_docker/real/ros_entrypoint.sh /ros_entrypoint.sh
-RUN chmod +x /ros_entrypoint.sh
-ENTRYPOINT ["/ros_entrypoint.sh"]
-CMD ["ros2","launch","fastbot_bringup","bringup.launch.xml"]
+# Launch bringup by default
+ENTRYPOINT ["/bin/bash", "-lc", "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_bringup bringup.launch.xml"]

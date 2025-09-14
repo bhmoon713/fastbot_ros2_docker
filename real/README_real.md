@@ -18,7 +18,7 @@ fastbot@fastbot:~$ sudo service docker start
 fastbot@fastbot:~$ sudo usermod -aG docker fastbot
 fastbot@fastbot:~$ newgrp docker
 ```
-now required package installed and download git and pull docker image and run both dockers.
+
 ```bash
 fastbot@fastbot:~$ cd ros2_ws/src
 fastbot@fastbot:~/ros2_ws/src$ sudo rm -rf fastbot_ros2_docker/
@@ -81,8 +81,10 @@ source install/setup.bash
 root@cd308b023452:
 ```
 ## Check network
-```bash
 docker network inspect real_fastbot_net | grep -i name
+
+
+
 
 fastbot@fastbot:~$ sudo nano /etc/udev/rules.d/arduino_nano.rules
 fastbot@fastbot:~$ sudo nano /etc/udev/rules.d/arduino_nano.rules
@@ -91,33 +93,24 @@ fastbot@fastbot:~$ sudo nano /etc/udev/rules.d/arduino_nano.rules
 
 sudo udevadm control --reload-rules
 sudo udevadm trigger
-```
+
 
 ## docker push command
-```bash
 docker login
 bhmoon418
 g.q.4xMN2E5bBDG
 docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-real
 docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
-```
-## Docker push
-```bash
-docker login
-bhmoon418
-or docker login -u bhmoon418
-g.q.4xMN2E5bBDG
-docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-real
-docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
-docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-real_2
-docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real_2
 
-docker compose -f docker-compose_2.yaml up -d
-docker compose -f docker-compose_2.yaml down
-```
+## git push
+docker login
+bhmoon418
+g.q.4xMN2E5bBDG
+docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-real
+docker push bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
+
 
 ## Use Jenkins
-```bash
 cd webpage_ws
 ./start_jenkins.sh
 
@@ -126,7 +119,7 @@ and move to that address
 
 id: admin
 pw: 12345
-```
+
 and run "CP22 real robot docker image automation _ Build here"
 This automates the docker image build and deplpy at fastbot.
 1. it build two images
@@ -171,6 +164,5 @@ docker build -t bhmoon418/bhmoon713-cp22:fastbot-ros2-real -f fastbot_ros2_docke
 
 docker build -f fastbot_ros2_docker/real/dockerfile-simple -t arm64-ros-test .
 docker run -it --rm arm64-ros-test bash
-```
 
 
