@@ -24,8 +24,8 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /ros2_ws/src
 # Copy packages into the image (paths are relative to BUILD CONTEXT)
-RUN git clone https://github.com/bhmoon713/fastbot_description.git
-RUN git clone https://github.com/bhmoon713/fastbot_slam.git
+RUN git clone https://github.com/bhmoon713/fastbot_description_cp22.git fastbot_description  && \
+    git clone https://github.com/bhmoon713/fastbot_slam.git
 # COPY fastbot/fastbot_description/ src/fastbot_description/
 # COPY fastbot/ src/fastbot
 
@@ -35,8 +35,9 @@ RUN git clone https://github.com/bhmoon713/fastbot_slam.git
 # COPY fastbot/fastbot_slam/         fastbot_slam/
 
 # Ensure Gazebo classic model path exists before copying
-RUN mkdir -p /usr/share/gazebo-11/models/fastbot_description
-COPY fastbot/fastbot_description/  /usr/share/gazebo-11/models/fastbot_description/
+RUN mkdir -p /usr/share/gazebo-11/models/fastbot_description && \
+    cp -a /ros2_ws/src/fastbot_description/. /usr/share/gazebo-11/models/fastbot_description/
+
 
 # Build the Colcon workspace and ensure it's sourced
 WORKDIR /ros2_ws

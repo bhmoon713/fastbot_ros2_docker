@@ -43,7 +43,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
 # Create workspace and clone sources
 RUN mkdir -p /ros2_ws/src && cd /ros2_ws/src && \
     git clone https://github.com/bhmoon713/fastbot_bringup.git && \
-    git clone https://github.com/bhmoon713/fastbot_description.git && \
+    git clone https://github.com/bhmoon713/fastbot_description_cp22.git fastbot_description && \
     # git clone https://github.com/bhmoon713/fastbot_gazebo.git && \
     git clone https://github.com/bhmoon713/serial_motor.git && \
     git clone https://github.com/bhmoon713/serial_motor_msgs.git && \
@@ -57,8 +57,8 @@ RUN mkdir -p /ros2_ws/src && cd /ros2_ws/src && \
 # COPY fastbot/Lslidar_ROS2_driver/      src/Lslidar_ROS2_driver/ 
 
 # IMPORTANT: our WORKDIR is /ros2_ws/src below, so destinations should NOT start with "src/"
-RUN mkdir -p /usr/share/gazebo-11/models/fastbot_description
-COPY fastbot_description/  /usr/share/gazebo-11/models/fastbot_description/
+RUN mkdir -p /usr/share/gazebo-11/models/fastbot_description && \
+    cp -a /ros2_ws/src/fastbot_description/. /usr/share/gazebo-11/models/fastbot_description/
 
 WORKDIR /ros2_ws/src
 RUN mkdir -p Lslidar_ROS2_driver/lslidar_driver/params \
