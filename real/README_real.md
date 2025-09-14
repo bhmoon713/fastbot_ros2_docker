@@ -24,6 +24,7 @@ fastbot@fastbot:~$ cd ros2_ws/src
 fastbot@fastbot:~/ros2_ws/src$ sudo rm -rf fastbot_ros2_docker/
 fastbot@fastbot:~/ros2_ws/src$ git clone https://github.com/bhmoon713/fastbot_ros2_docker.git
 fastbot@fastbot:~/ros2_ws/src$ cd fastbot_ros2_docker/real/
+fastbot@fastbot:~/ros2_ws/src/fastbot_ros2_docker/real$ docker rmi -f $(docker images -aq)
 fastbot@fastbot:~/ros2_ws/src/fastbot_ros2_docker/real$ docker-compose up
 ```
 
@@ -146,3 +147,9 @@ docker exec -it fastbot-ros2-real bash
 root@cd308b0e1118:$ cd ~/ros2_ws/src
 root@cd308b0e1118:/ros2_ws# ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args --remap cmd_vel:=fastbot/cmd_vel
 ```
+
+docker tag bhmoon418/bhmoon713-cp22:fastbot-ros2-real \
+           bhmoon418/bhmoon713-cp22:fastbot-ros2-real-arm64
+
+docker tag bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real \
+           bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real-arm64

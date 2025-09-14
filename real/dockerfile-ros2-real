@@ -23,6 +23,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
     python3-pip \
     python3-setuptools \
     python3-colcon-common-extensions \
+    python3-rosdep \
     ros-humble-xacro \
     ros-humble-tf2-ros \
     ros-humble-tf2-tools \
@@ -54,16 +55,25 @@ RUN mkdir -p /ros2_ws/src && cd /ros2_ws/src && \
 # COPY fastbot/serial_motor/     src/serial_motor/ 
 # COPY fastbot/serial_motor_msgs/      src/serial_motor_msgs/ 
 # COPY fastbot/Lslidar_ROS2_driver/      src/Lslidar_ROS2_driver/ 
-COPY fastbot/Lslidar_ROS2_driver/lslidar_driver/params/lsx10.yaml \
-     src/Lslidar_ROS2_driver/lslidar_driver/params/
-COPY fastbot/Lslidar_ROS2_driver/lslidar_driver/launch/lslidar_launch.py \
-     src/Lslidar_ROS2_driver/lslidar_driver/launch/
 
+# IMPORTANT: our WORKDIR is /ros2_ws/src below, so destinations should NOT start with "src/"
+WORKDIR /ros2_ws/src
+RUN mkdir -p Lslidar_ROS2_driver/lslidar_driver/params \
+             Lslidar_ROS2_driver/lslidar_driver/launch
+COPY fastbot_ros2_docker/real/lsx10.yaml \
+     Lslidar_ROS2_driver/lslidar_driver/params/
+COPY fastbot_ros2_docker/real/lslidar_launch.py \
+     Lslidar_ROS2_driver/lslidar_driver/launch/
+
+# If you intend to read this from the host Pi boot partition, you’ll need to bind-mount it at runtime.
+# Inside the image we just ensure the path exists for completeness.
+RUN mkdir -p /boot/firmware
 COPY fastbot_ros2_docker/real/config.txt    /boot/firmware/
 # COPY fastbot_ros2_docker/real/lslidar.rules    /etc/udev/rules.d/
 # COPY fastbot_ros2_docker/real/arduino_nano.rules    /etc/udev/rules.d/
 
 # Resolve package dependencies (after sources exist)
+# (rosdep will warn about running as root; safe to ignore inside containers)
 RUN apt-get update \
  && rosdep update \
  && rosdep install --from-paths /ros2_ws/src --ignore-src -r -y \
@@ -71,8 +81,9 @@ RUN apt-get update \
 
 # Build workspace (single build)
 # Build (single pass is fine; keep two-pass if you really need it)
+WORKDIR /ros2_ws
 RUN source /opt/ros/humble/setup.bash && \
-    cd /ros2_ws && colcon build --symlink-install
+    colcon build --symlink-install
 
 # Launch bringup by default
 ENTRYPOINT ["/bin/bash", "-lc", "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_bringup bringup.launch.xml"]
