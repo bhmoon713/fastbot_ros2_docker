@@ -1,56 +1,38 @@
-version: "3.8"
-
+version: '3'
 services:
   fastbot-ros2-real:
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-real
     container_name: fastbot-ros2-real
-
-    # Pi is arm64/v8 on recent models; image must be arm64-compatible.
-    # If you push a multi-arch manifest to Docker Hub, you can omit platform.
-    # platform: linux/arm64/v8
-
-    network_mode: host
-    ipc: host
-    pid: host
-
-    # On-robot runtime env
     environment:
+      - ROS_DOMAIN_ID=0
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-      - ROS_DOMAIN_ID=1
-      # If you ship cyclonedds.xml inside the image, you can skip this volume.
-      # Make sure your image looks for it at /etc/cyclonedds.xml
+      - CYCLONEDDS_URI=/var/lib/theconstruct.rrl/cyclonedds.xml
     volumes:
-      - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
-
-    # Only map devices that ACTUALLY exist on the Pi.
-    # Prefer stable /dev/serial/by-id/* symlinks when possible.
-    devices:
-      - /dev/video0:/dev/video0           # if camera exposed as v4l2
-      - /dev/lslidar:/dev/lslidar         # your host udev alias
+      - /dev/video0:/dev/video0
+      - /dev/lslidar:/dev/lslidar
       - /dev/arduino_nano:/dev/arduino_nano
-
-    # Full hardware access (GPIO/I2C/SPI/USB timing) is easiest with privileged.
+      - ./ros_entrypoint.sh:/ros_entrypoint.sh
+      - /var/lib/theconstruct.rrl/cyclonedds.xml:/var/lib/theconstruct.rrl/cyclonedds.xml
     privileged: true
-    # If you know the exact needs, you can replace privileged with targeted rules:
-    # device_cgroup_rules:
-    #   - 'c 81:* rmw'     # video*
-    #   - 'c 188:* rmw'    # ttyUSB*
-    #   - 'c 166:* rmw'    # ttyACM*
-
-    restart: unless-stopped
-
-  fastbot-ros2-slam-real:
-    image: bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
-    container_name: fastbot-ros2-slam-real
-
     network_mode: host
-    ipc: host
-    pid: host
-
+    restart: always
+    entrypoint: /ros_entrypoint.sh
+    command: ["ros2 launch fastbot_bringup bringup.launch.xml"]
+  
+  fastbot-ros2-real-slam:
+    image: bhmoon418/bhmoon713-cp22:fastbot-ros2-real-slam
+    container_name: fastbot-ros2-real-slam
     environment:
+      - DISPLAY=${DISPLAY}
+      - ROS_DOMAIN_ID=0
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-      - ROS_DOMAIN_ID=1
+      - CYCLONEDDS_URI=/var/lib/theconstruct.rrl/cyclonedds.xml
     volumes:
-      - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
-
-    restart: unless-stopped
+      - ./ros_entrypoint.sh:/ros_entrypoint.sh
+      - /var/lib/theconstruct.rrl/cyclonedds.xml:/var/lib/theconstruct.rrl/cyclonedds.xml
+      - /tmp/.X11-unix:/tmp/.X11-unix
+    privileged: true
+    network_mode: host
+    restart: always
+    entrypoint: /ros_entrypoint.sh
+    command: ["sleep 8 && ros2 launch fastbot_slam cartographer.launch.py"]
