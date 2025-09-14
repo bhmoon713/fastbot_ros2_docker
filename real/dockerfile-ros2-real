@@ -44,7 +44,7 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y --no-install-reco
 RUN mkdir -p /ros2_ws/src && cd /ros2_ws/src && \
     git clone https://github.com/bhmoon713/fastbot_bringup.git && \
     git clone https://github.com/bhmoon713/fastbot_description.git && \
-    git clone https://github.com/bhmoon713/fastbot_gazebo.git && \
+    # git clone https://github.com/bhmoon713/fastbot_gazebo.git && \
     git clone https://github.com/bhmoon713/serial_motor.git && \
     git clone https://github.com/bhmoon713/serial_motor_msgs.git && \
     git clone -b N10_V1.0 https://github.com/Lslidar/Lslidar_ROS2_driver.git
