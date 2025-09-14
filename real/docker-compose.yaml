@@ -1,57 +1,56 @@
-version: "3"
+version: "3.8"
 
 services:
   fastbot-ros2-real:
-    # build:
-    #   context: ${HOME}/ros2_ws/src
-    #   dockerfile: fastbot_ros2_docker/real/dockerfile-ros2-real
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-real
     container_name: fastbot-ros2-real
-    cap_add:
-      - NET_ADMIN
+
+    # Pi is arm64/v8 on recent models; image must be arm64-compatible.
+    # If you push a multi-arch manifest to Docker Hub, you can omit platform.
+    # platform: linux/arm64/v8
+
+    network_mode: host
+    ipc: host
+    pid: host
+
+    # On-robot runtime env
     environment:
-      - XAUTHORITY=${XAUTHORITY}       
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - ROS_DOMAIN_ID=1
-    devices:
-      - /dev/video0:/dev/video0
-      - /dev/lslidar:/dev/lslidar
-      - /dev/arduino_nano:/dev/arduino_nano
-      # Likely your Arduino Nano (CDC ACM):
-      # - /dev/serial/by-id/usb-1a86_USB_Single_Serial_5A6D016743-if00:/dev/arduino_nano
-      # Likely your LiDAR (CH340 USB-serial):
-      # - /dev/serial/by-id/usb-1a86_USB_Serial-if00-port0:/dev/lslidar
-      # Camera passthrough as before:
-      # - /dev/video0:/dev/video0
-      # - /dev/video0:/dev/video0
-      # - /dev/ttyACM0:/dev/lslidar
-      # - /dev/ttyUSB0:/dev/arduino_nano
+      # If you ship cyclonedds.xml inside the image, you can skip this volume.
+      # Make sure your image looks for it at /etc/cyclonedds.xml
     volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
       - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
+
+    # Only map devices that ACTUALLY exist on the Pi.
+    # Prefer stable /dev/serial/by-id/* symlinks when possible.
+    devices:
+      - /dev/video0:/dev/video0           # if camera exposed as v4l2
+      - /dev/lslidar:/dev/lslidar         # your host udev alias
+      - /dev/arduino_nano:/dev/arduino_nano
+
+    # Full hardware access (GPIO/I2C/SPI/USB timing) is easiest with privileged.
     privileged: true
-    restart: always
+    # If you know the exact needs, you can replace privileged with targeted rules:
+    # device_cgroup_rules:
+    #   - 'c 81:* rmw'     # video*
+    #   - 'c 188:* rmw'    # ttyUSB*
+    #   - 'c 166:* rmw'    # ttyACM*
 
-    networks:
-      - fastbot_net
-
+    restart: unless-stopped
 
   fastbot-ros2-slam-real:
-    # build:
-    #   context: ${HOME}/ros2_ws/src
-    #   dockerfile: fastbot_ros2_docker/real/dockerfile-ros2-slam-real
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
     container_name: fastbot-ros2-slam-real
+
+    network_mode: host
+    ipc: host
+    pid: host
+
     environment:
-      - DISPLAY=${DISPLAY}
-      - XAUTHORITY=${XAUTHORITY}    
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - ROS_DOMAIN_ID=1
     volumes:
-      - /tmp/.X11-unix:/tmp/.X11-unix
       - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
-    networks:
-      - fastbot_net
 
-networks:
-  fastbot_net:
+    restart: unless-stopped
