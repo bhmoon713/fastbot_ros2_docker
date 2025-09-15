@@ -14,15 +14,15 @@ services:
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - ROS_DOMAIN_ID=1
     devices:
-      # - /dev/video0:/dev/video0
-      # - /dev/lslidar:/dev/lslidar
-      # - /dev/arduino_nano:/dev/arduino_nano
-      # Likely your Arduino Nano (CDC ACM):
-      - /dev/serial/by-id/usb-1a86_USB_Single_Serial_5A6D016743-if00:/dev/arduino_nano
-      # Likely your LiDAR (CH340 USB-serial):
-      - /dev/serial/by-id/usb-1a86_USB_Serial-if00-port0:/dev/lslidar
-      # Camera passthrough as before:
       - /dev/video0:/dev/video0
+      - /dev/lslidar:/dev/lslidar
+      - /dev/arduino_nano:/dev/arduino_nano
+      # # Likely your Arduino Nano (CDC ACM):
+      # - /dev/serial/by-id/usb-1a86_USB_Single_Serial_5A6D016743-if00:/dev/arduino_nano
+      # # Likely your LiDAR (CH340 USB-serial):
+      # - /dev/serial/by-id/usb-1a86_USB_Serial-if00-port0:/dev/lslidar
+      # # Camera passthrough as before:
+      # - /dev/video0:/dev/video0
       # - /dev/video0:/dev/video0
       # - /dev/ttyACM0:/dev/lslidar
       # - /dev/ttyUSB0:/dev/arduino_nano
