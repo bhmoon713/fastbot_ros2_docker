@@ -1,13 +1,13 @@
 # Real robot
 
-From your terminal, ssh to fastbot real robot
+From your terminal, ssh to fastbot real robot. 
+key in password : fastbot
+
 ```bash
 ssh fastbot@master
 ```
-key in password : fastbot
-
 now you are in the robot fastbot@fastbot:~$
-you can skip this block if you already intalled on your robot
+intalling required packages, you can skip this block if you already intalled on your robot
 
 ```bash
 fastbot@fastbot:~$ sudo apt update
@@ -18,7 +18,7 @@ fastbot@fastbot:~$ sudo service docker start
 fastbot@fastbot:~$ sudo usermod -aG docker fastbot
 fastbot@fastbot:~$ newgrp docker
 ```
-
+## Now download git page and run the docker images
 ```bash
 fastbot@fastbot:~$ cd ros2_ws/src
 fastbot@fastbot:~/ros2_ws/src$ sudo rm -rf fastbot_ros2_docker/
@@ -27,6 +27,13 @@ fastbot@fastbot:~/ros2_ws/src$ cd fastbot_ros2_docker/real/
 fastbot@fastbot:~/ros2_ws/src/fastbot_ros2_docker/real$ docker rmi -f $(docker images -aq)
 fastbot@fastbot:~/ros2_ws/src/fastbot_ros2_docker/real$ docker-compose up
 ```
+## if you encounter docker container issues during above process, try to remove and try again above process. you can run below command at any context.
+docker kill $(docker ps -aq) &> /dev/null;
+docker container prune -f
+docker volume rm $(docker volume ls -q)
+docker volume ls
+docker rmi -f $(docker images -aq)
+
 
 ## if you want to try at your local computer, you can key these commands
 
