@@ -36,6 +36,11 @@ docker volume rm $(docker volume ls -q)
 docker volume ls
 docker rmi -f $(docker images -aq)
 ```
+## For the case you need build the image again.
+cd ros2_ws/src
+docker build -t bhmoon418/bhmoon713-cp22:fastbot-ros2-real -f fastbot_ros2_docker/real/dockerfile-ros2-real .
+docker build -t bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real -f fastbot_ros2_docker/real/dockerfile-ros2-slam-real .
+
 ## Check each docker container : fastbot-ros2-real
 ```bash
 sudo docker exec -it fastbot-ros2-real bash
