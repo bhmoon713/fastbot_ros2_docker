@@ -44,6 +44,8 @@ docker build -t bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real -f fastbot_ros2_
 ## Check each docker container : fastbot-ros2-real
 ```bash
 sudo docker exec -it fastbot-ros2-real bash
+source /opt/ros/humble/setup.bash
+source install/setup.bash
 root@cd308b0e1118:/ros2_ws# ros2 run teleop_twist_keyboard teleop_twist_keyboard --ros-args --remap cmd_vel:=fastbot/cmd_vel
 ```
 
