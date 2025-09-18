@@ -31,9 +31,9 @@ services:
       - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
     privileged: true
     restart: always
-
-    networks:
-      - fastbot_net
+    network_mode: host
+    # networks:
+    #   - fastbot_net
 
 
   fastbot-ros2-slam-real:
@@ -50,8 +50,9 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
-    networks:
-      - fastbot_net
+    # networks:
+    #   - fastbot_net
+    network_mode: host
 
-networks:
-  fastbot_net:
+# networks:
+#   fastbot_net:
