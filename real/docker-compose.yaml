@@ -11,7 +11,7 @@ services:
     restart: always
     devices:
       - /dev/video0:/dev/video0
-      - /dev/ttyACM0:/dev/lslidar
+      - /dev/ttyACM0:/dev/lslidar # this is working
       - /dev/ttyUSB0:/dev/arduino_nano
     environment:
       - DISPLAY=${DISPLAY}
