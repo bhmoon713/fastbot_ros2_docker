@@ -15,7 +15,7 @@ services:
       - NET_ADMIN
     environment:
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-      - ROS_DOMAIN_ID=1
+      - ROS_DOMAIN_ID=0
       - ROS_LOCALHOST_ONLY=0    # <— don’t confine to loopback
     devices:
       # - /dev/video0:/dev/video0
@@ -54,7 +54,7 @@ services:
       - DISPLAY=${DISPLAY}
       - XAUTHORITY=${XAUTHORITY}    
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
-      - ROS_DOMAIN_ID=1
+      - ROS_DOMAIN_ID=0
       - ROS_LOCALHOST_ONLY=0 
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
