@@ -21,6 +21,7 @@ services:
     devices:
       - /dev/video0:/dev/video0
       - /dev/lslidar:/dev/lslidar
+      - /dev/ttyACM0:/dev/ttyACM0     # real device
       - /dev/arduino_nano:/dev/arduino_nano
       # # Likely your Arduino Nano (CDC ACM):
       # - /dev/serial/by-id/usb-1a86_USB_Single_Serial_5A6D016743-if00:/dev/arduino_nano
