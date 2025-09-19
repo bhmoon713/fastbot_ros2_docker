@@ -3,21 +3,8 @@
   <Domain id="any">
     <General>
       <NetworkInterfaceAddress>auto</NetworkInterfaceAddress>
+      <AllowMulticast>true</AllowMulticast>
+      <EnableMulticastLoopback>true</EnableMulticastLoopback>
     </General>
-    <Discovery>
-      <ParticipantIndex>auto</ParticipantIndex>
-      <Peers>
-        <!-- Unicast peer list using Docker's DNS (service names) -->
-        <Peer address="fastbot-ros2-real"/>
-        <Peer address="fastbot-ros2-slam-real"/>
-      </Peers>
-      <!-- Multicast often flaky on Docker bridge; keep but rely on peers -->
-      <MaxAutoParticipantIndex>120</MaxAutoParticipantIndex>
-    </Discovery>
-    <Transport>
-      <UDP>
-        <EnableMulticast>true</EnableMulticast>
-      </UDP>
-    </Transport>
   </Domain>
 </CycloneDDS>

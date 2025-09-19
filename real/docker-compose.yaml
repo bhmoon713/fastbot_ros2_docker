@@ -19,18 +19,18 @@ services:
       - ROS_LOCALHOST_ONLY=0    # <— don’t confine to loopback
       - CYCLONEDDS_URI=file:///etc/cyclonedds.xml
     devices:
-      # - /dev/video0:/dev/video0
-      # - /dev/lslidar:/dev/lslidar
-      # - /dev/arduino_nano:/dev/arduino_nano
+      - /dev/video0:/dev/video0
+      - /dev/lslidar:/dev/lslidar
+      - /dev/arduino_nano:/dev/arduino_nano
       # # Likely your Arduino Nano (CDC ACM):
       # - /dev/serial/by-id/usb-1a86_USB_Single_Serial_5A6D016743-if00:/dev/arduino_nano
       # # Likely your LiDAR (CH340 USB-serial):
       # - /dev/serial/by-id/usb-1a86_USB_Serial-if00-port0:/dev/lslidar
       # # Camera passthrough as before:
       # - /dev/video0:/dev/video0
-      - /dev/video0:/dev/video0
-      - /dev/ttyACM0:/dev/ttyACM0
-      - /dev/ttyUSB0:/dev/ttyUSB0
+      # - /dev/video0:/dev/video0
+      # - /dev/ttyACM0:/dev/ttyACM0
+      # - /dev/ttyUSB0:/dev/ttyUSB0
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
