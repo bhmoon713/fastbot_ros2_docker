@@ -17,10 +17,11 @@ services:
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - ROS_DOMAIN_ID=0
       - ROS_LOCALHOST_ONLY=0    # <— don’t confine to loopback
-      - CYCLONEDDS_URI=file:///etc/cyclonedds.xml
+      # - CYCLONEDDS_URI=file:///etc/cyclonedds.xml
+      - CYCLONEDDS_URI=file:///var/lib/theconstruct.rrl/cyclonedds.xml
     devices:
       - /dev/video0:/dev/video0
-      - /dev/lslidar:/dev/lslidar
+      # - /dev/lslidar:/dev/lslidar
       - /dev/ttyACM0:/dev/ttyACM0     # real device
       - /dev/arduino_nano:/dev/arduino_nano
       # # Likely your Arduino Nano (CDC ACM):
@@ -31,10 +32,11 @@ services:
       # - /dev/video0:/dev/video0
       # - /dev/video0:/dev/video0
       # - /dev/ttyACM0:/dev/ttyACM0
-      # - /dev/ttyUSB0:/dev/ttyUSB0
+      - /dev/ttyUSB0:/dev/ttyUSB0
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
+      # - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
+      - $HOME/ros2_ws/src/fastbot_ros2_docker/real/cyclonedds.xml:/var/lib/theconstruct.rrl/cyclonedds.xml:ro
     privileged: true
     restart: always
 
@@ -58,10 +60,12 @@ services:
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - ROS_DOMAIN_ID=0
       - ROS_LOCALHOST_ONLY=0 
-      - CYCLONEDDS_URI=file:///etc/cyclonedds.xml
+      # - CYCLONEDDS_URI=file:///etc/cyclonedds.xml
+      - CYCLONEDDS_URI=file:///var/lib/theconstruct.rrl/cyclonedds.xml
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
+      # - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
+      - $HOME/ros2_ws/src/fastbot_ros2_docker/real/cyclonedds.xml:/var/lib/theconstruct.rrl/cyclonedds.xml:ro
 #     networks:
 #       - fastbot_net
 
