@@ -2,52 +2,65 @@ version: "3"
 
 services:
   fastbot-ros2-real:
+    # build:
+    #   context: ${HOME}/ros2_ws/src
+    #   dockerfile: fastbot_ros2_docker/real/dockerfile-ros2-real
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-real
     container_name: fastbot-ros2-real
-    privileged: true
+    network_mode: host          # <— THE big one
+    ipc: host                   # optional; avoids some SHM surprises
+    privileged: true            # optional, but common on real robots
+    
     cap_add:
       - NET_ADMIN
-    network_mode: host
-    ipc: host
     environment:
-      # Match host defaults (no host changes needed):
-      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
-      - ROS_DOMAIN_ID=0
-      # If you don’t use GUI, you can omit DISPLAY/XAUTHORITY completely.
-      # - DISPLAY=${DISPLAY}
-      # - XAUTHORITY=${XAUTHORITY}
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - ROS_DOMAIN_ID=1
+      - ROS_LOCALHOST_ONLY=0    # <— don’t confine to loopback
     devices:
       - /dev/video0:/dev/video0
       - /dev/lslidar:/dev/lslidar
       - /dev/arduino_nano:/dev/arduino_nano
-    # Remove Cyclone config (we're using Fast DDS now):
-    # volumes:
-    #   - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
+      # # Likely your Arduino Nano (CDC ACM):
+      # - /dev/serial/by-id/usb-1a86_USB_Single_Serial_5A6D016743-if00:/dev/arduino_nano
+      # # Likely your LiDAR (CH340 USB-serial):
+      # - /dev/serial/by-id/usb-1a86_USB_Serial-if00-port0:/dev/lslidar
+      # # Camera passthrough as before:
+      # - /dev/video0:/dev/video0
+      # - /dev/video0:/dev/video0
+      # - /dev/ttyACM0:/dev/lslidar
+      # - /dev/ttyUSB0:/dev/arduino_nano
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
+    privileged: true
     restart: always
-    # Ensure something actually starts:
-    command: >
-      bash -lc "
-      source /opt/ros/humble/setup.bash &&
-      source /ros2_ws/install/setup.bash 2>/dev/null || true &&
-      ros2 launch fastbot_bringup bringup.launch.xml
-      "
+
+    # networks:
+    #   - fastbot_net
+
 
   fastbot-ros2-slam-real:
+    # build:
+    #   context: ${HOME}/ros2_ws/src
+    #   dockerfile: fastbot_ros2_docker/real/dockerfile-ros2-slam-real
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
     container_name: fastbot-ros2-slam-real
-    network_mode: host
-    ipc: host
+    network_mode: host          # <— THE big one
+    ipc: host                   # optional; avoids some SHM surprises
+    privileged: true            # optional, but common on real robots
+
     environment:
-      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
-      - ROS_DOMAIN_ID=0
-      # - DISPLAY=${DISPLAY}
-      # - XAUTHORITY=${XAUTHORITY}
-    # volumes:
-    #   - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
-    restart: always
-    command: >
-      bash -lc "
-      source /opt/ros/humble/setup.bash &&
-      source /ros2_ws/install/setup.bash 2>/dev/null || true &&
-      ros2 launch fastbot_slam cartographer.launch.py
-      "
+      - DISPLAY=${DISPLAY}
+      - XAUTHORITY=${XAUTHORITY}    
+      - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
+      - ROS_DOMAIN_ID=1
+      - ROS_LOCALHOST_ONLY=0 
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
+#     networks:
+#       - fastbot_net
+
+# networks:
+#   fastbot_net:
