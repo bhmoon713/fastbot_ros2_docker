@@ -17,7 +17,7 @@ services:
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - ROS_DOMAIN_ID=0
       - ROS_LOCALHOST_ONLY=0    # <— don’t confine to loopback
-      - CYCLONEDDS_URI=file:///etc/cyclonedds.xml0
+      - CYCLONEDDS_URI=file:///etc/cyclonedds.xml
     devices:
       # - /dev/video0:/dev/video0
       # - /dev/lslidar:/dev/lslidar
