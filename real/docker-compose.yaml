@@ -21,6 +21,10 @@ services:
     group_add:
       - dialout
     privileged: true
+    restart: always
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
 
   fastbot-ros2-real-slam:
     # build:
@@ -38,5 +42,8 @@ services:
       - ROS_DOMAIN_ID=0
       - ROS_IPV6=off
     privileged: true
+    volumes:
+      - /tmp/.X11-unix:/tmp/.X11-unix
+      - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
     #command: bash -c "source /opt/ros/humble/setup.bash && source install/setup.bash && ros2 launch fastbot_slam cartographer.launch.py && ros2 daemon stop"
     #command: bash -c "cd /ros2_ws && colcon build && source install/setup.bash && ros2 launch fastbot_slam cartographer.launch.py"
