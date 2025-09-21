@@ -7,6 +7,7 @@ services:
     #   dockerfile: fastbot_ros2_docker/real/dockerfile-ros2-real
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-real
     container_name: fastbot-ros2-real
+    network_mode: host
     cap_add:
       - NET_ADMIN
     environment:
@@ -23,8 +24,8 @@ services:
     privileged: true
     restart: always
 
-    networks:
-      - fastbot_net
+    # networks:
+    #   - fastbot_net
 
 
   fastbot-ros2-slam-real:
@@ -33,6 +34,7 @@ services:
     #   dockerfile: fastbot_ros2_docker/real/dockerfile-ros2-slam-real
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
     container_name: fastbot-ros2-slam-real
+    network_mode: host
     environment:
       - DISPLAY=${DISPLAY}
       - XAUTHORITY=${XAUTHORITY}    
@@ -41,8 +43,8 @@ services:
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
-    networks:
-      - fastbot_net
+#     networks:
+#       - fastbot_net
 
-networks:
-  fastbot_net:
+# networks:
+#   fastbot_net:
