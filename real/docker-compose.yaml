@@ -23,9 +23,8 @@ services:
       - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
     privileged: true
     restart: always
-
     networks:
-      - fastbot_net
+      - fastbot_net  
 
 
   fastbot-ros2-slam-real:
@@ -36,6 +35,8 @@ services:
     container_name: fastbot-ros2-slam-real
     #network_mode: host
     # network_mode: bridge
+    depends_on:
+      - fastbot-ros2-real
     environment:
       - DISPLAY=${DISPLAY}
       - XAUTHORITY=${XAUTHORITY}    
@@ -46,6 +47,8 @@ services:
       - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
     networks:
       - fastbot_net
-
+      
 networks:
   fastbot_net:
+    external: true
+    name: host # This explicitly uses the host network driver
