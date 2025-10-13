@@ -47,8 +47,8 @@ services:
       - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
     networks:
       - fastbot_net
-      
+
 networks:
   fastbot_net:
     external: true
-    name: host # This explicitly uses the host network driver
+    driver: host # This explicitly uses the host network driver
