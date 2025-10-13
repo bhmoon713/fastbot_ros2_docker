@@ -35,7 +35,7 @@ services:
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
     container_name: fastbot-ros2-slam-real
     #network_mode: host
-    network_mode: bridge
+    # network_mode: bridge
     environment:
       - DISPLAY=${DISPLAY}
       - XAUTHORITY=${XAUTHORITY}    
