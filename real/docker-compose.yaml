@@ -7,11 +7,11 @@ services:
     #   dockerfile: fastbot_ros2_docker/real/dockerfile-ros2-real
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-real
     container_name: fastbot-ros2-real
-    #network_mode: host
+    network_mode: host
     cap_add:
       - NET_ADMIN
     environment:
-      - XAUTHORITY=${XAUTHORITY}       
+      - XAUTHORITY=${XAUTHORITY}
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - ROS_DOMAIN_ID=0
     devices:
@@ -35,6 +35,7 @@ services:
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
     container_name: fastbot-ros2-slam-real
     #network_mode: host
+    network_mode: bridge
     environment:
       - DISPLAY=${DISPLAY}
       - XAUTHORITY=${XAUTHORITY}    
