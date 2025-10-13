@@ -20,13 +20,13 @@ fastbot@fastbot:~$ newgrp docker
 ```
 ## Now download git page and run the docker images
 ```bash
-fastbot@fastbot:~$ cd ros2_ws/src
-fastbot@fastbot:~/ros2_ws/src$ sudo rm -rf fastbot_ros2_docker/
-fastbot@fastbot:~/ros2_ws/src$ git clone https://github.com/bhmoon713/fastbot_ros2_docker.git
-fastbot@fastbot:~/ros2_ws/src$ cd fastbot_ros2_docker/real/
-fastbot@fastbot:~/ros2_ws/src/fastbot_ros2_docker/real$ docker rmi -f $(docker images -aq)
-fastbot@fastbot:~/ros2_ws/src/fastbot_ros2_docker/real$ xhost +local:root
-fastbot@fastbot:~/ros2_ws/src/fastbot_ros2_docker/real$ docker-compose up
+cd ros2_ws/src
+sudo rm -rf fastbot_ros2_docker/
+git clone https://github.com/bhmoon713/fastbot_ros2_docker.git
+cd fastbot_ros2_docker/real/
+docker rmi -f $(docker images -aq)
+xhost +local:root
+docker-compose up
 ```
 ## if you encounter docker container issues during above process, try to remove and try again above process. you can run below command at any context. This will clean up docker containers and docker images.
 ```bash
