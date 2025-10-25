@@ -24,7 +24,6 @@ cd ros2_ws/src
 sudo rm -rf fastbot_ros2_docker/
 git clone https://github.com/bhmoon713/fastbot_ros2_docker.git
 cd fastbot_ros2_docker/real/
-docker rmi -f $(docker images -aq)
 xhost +local:root
 docker-compose up
 ```

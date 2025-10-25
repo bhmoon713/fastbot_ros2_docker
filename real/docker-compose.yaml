@@ -1,9 +1,6 @@
 version: "3"
 services:
   fastbot-ros2-real:
-    # build:
-    #   context: ${HOME}/ros2_ws/src
-    #   dockerfile: fastbot_ros2_docker/real/dockerfile-ros2-real
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-real
     container_name: fastbot-ros2-real
     network_mode: host
@@ -13,6 +10,7 @@ services:
       - XAUTHORITY=${XAUTHORITY}
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - ROS_DOMAIN_ID=0
+      - ROS_IPV6=off
     devices:
       - /dev/video0:/dev/video0
       - /dev/ttyACM0:/dev/lslidar
@@ -22,18 +20,12 @@ services:
       - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
     privileged: true
     restart: always
-    # networks:
-    #   - fastbot_net  
-
 
   fastbot-ros2-slam-real:
-    # build:
-    #   context: ${HOME}/ros2_ws/src
-    #   dockerfile: fastbot_ros2_docker/real/dockerfile-ros2-slam-real
+
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
     container_name: fastbot-ros2-slam-real
     network_mode: host
-    #network_mode: bridge
     depends_on:
       - fastbot-ros2-real
     environment:
@@ -41,11 +33,8 @@ services:
       - XAUTHORITY=${XAUTHORITY}    
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - ROS_DOMAIN_ID=0
+      - ROS_IPV6=off
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
-    # networks:
-    #   - fastbot_net
 
-# networks:
-#   fastbot_net:
