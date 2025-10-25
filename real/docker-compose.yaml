@@ -11,7 +11,6 @@ services:
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - ROS_DOMAIN_ID=0
       - ROS_IPV6=off
-      - CYCLONEDDS_URI=/var/lib/theconstruct.rrl/cyclonedds.xml
     devices:
       - /dev/video0:/dev/video0
       - /dev/ttyACM0:/dev/lslidar
@@ -37,7 +36,6 @@ services:
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - ROS_DOMAIN_ID=0
       - ROS_IPV6=off
-      - CYCLONEDDS_URI=/var/lib/theconstruct.rrl/cyclonedds.xml
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
