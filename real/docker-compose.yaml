@@ -25,6 +25,8 @@ services:
       - /var/lib/theconstruct.rrl/cyclonedds.xml:/var/lib/theconstruct.rrl/cyclonedds.xml
     privileged: true
     restart: always
+    entrypoint: /ros_entrypoint.sh
+    command: ["ros2 launch fastbot_bringup bringup.launch.xml"]
 
   fastbot-ros2-slam-real:
     platform: linux/arm64
@@ -44,4 +46,9 @@ services:
       - /tmp/.X11-unix:/tmp/.X11-unix
       # - ./cyclonedds.xml:/etc/cyclonedds.xml:ro
       - /var/lib/theconstruct.rrl/cyclonedds.xml:/var/lib/theconstruct.rrl/cyclonedds.xml
+
+    privileged: true
+    restart: always
+    entrypoint: /ros_entrypoint.sh
+    command: ["sleep 5 && ros2 launch fastbot_slam cartographer.launch.py"]
 

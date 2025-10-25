@@ -92,4 +92,4 @@ RUN source /opt/ros/humble/setup.bash && \
     colcon build --symlink-install
 
 # Launch bringup by default
-ENTRYPOINT ["/bin/bash", "-lc", "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_bringup bringup.launch.xml"]
+# ENTRYPOINT ["/bin/bash", "-lc", "source /opt/ros/humble/setup.bash && source /ros2_ws/install/setup.bash && ros2 launch fastbot_bringup bringup.launch.xml"]
