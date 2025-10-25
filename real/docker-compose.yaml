@@ -30,7 +30,7 @@ services:
       - fastbot-ros2-real
     environment:
       - DISPLAY=${DISPLAY}
-      - XAUTHORITY=${XAUTHORITY}    
+      - XAUTHORITY=${XAUTHORITY}
       - RMW_IMPLEMENTATION=rmw_cyclonedds_cpp
       - ROS_DOMAIN_ID=0
       - ROS_IPV6=off
