@@ -1,7 +1,7 @@
 version: "3"
 services:
   fastbot-ros2-real:
-    platform: linux/arm64
+    # platform: linux/arm64
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-real
     container_name: fastbot-ros2-real
     network_mode: host
@@ -29,7 +29,7 @@ services:
     # command: ["ros2 launch fastbot_bringup bringup.launch.xml"]
 
   fastbot-ros2-slam-real:
-    platform: linux/arm64
+    # platform: linux/arm64
     image: bhmoon418/bhmoon713-cp22:fastbot-ros2-slam-real
     container_name: fastbot-ros2-slam-real
     network_mode: host
